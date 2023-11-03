@@ -1,5 +1,7 @@
-import logo from './logo.svg';
+
 import './App.css';
+
+//https://www.geeksforgeeks.org/how-to-create-a-multi-page-website-using-react-js/#
 
 function App() {
   return (
