@@ -6,7 +6,7 @@ import './App.css';
 function App() {
   return (
     <div class ="main">
-
+      This is the main page
     </div>
   );
 }
