@@ -2,18 +2,18 @@ import {useState, React} from "react";
 import './OrderSum.css';
 
 function OrderSum() {
-
     let orderTotal
-    let item = "test item"
-    let detail = "detail"
-    // const [item, setItem] = useState([
-    //     ...item,
-    //     {
-    //         name: "TestItem",
-    //         price: 100.00
-    //     }
-    // ]);
-
+    const [items, setItem] = useState([]);
+    items.push({
+        name: "Test Item",
+        price: 100
+    });
+    const [customer, setCustomer] = useState(
+        {
+            name: "John Doe",
+            address: "Grove Street"
+        }
+    );
 
     return (
         <div id = "orderSum"> 
@@ -21,9 +21,9 @@ function OrderSum() {
             <hr/>
             <div id = "orderBody">
                 <ul id = "itemsOrdered">
-                    <li>{item}</li>
+                    <li>{items[0].name}</li>
                     <ul>
-                        <li>{detail}</li>
+                        <li>{items[0].price}</li>
                     </ul>
                 </ul>
                 <p>Order Total: {orderTotal}</p>
@@ -33,9 +33,9 @@ function OrderSum() {
             <hr/>
             <div id = "orderDetails">
                 <ul id = "detailList">
-                    <li>Customer Name: {item}</li>
-                    <li>Delivery Address: {item}</li>
-                    <li>Payment: {item}</li>
+                    <li>Customer Name: {customer.name}</li>
+                    <li>Delivery Address: {customer.address}</li>
+                    <li>Payment: {}</li>
                     <li>Test:</li>
                 </ul>
             </div>
@@ -45,3 +45,11 @@ function OrderSum() {
 };
 
 export default OrderSum;
+
+//EXAMPLE
+//setArtists( // Replace the state
+//  [ // with a new array
+//    ...artists, // that contains all the old items
+//    { id: nextId++, name: name } // and one new item at the end
+//  ]
+//);
