@@ -1,5 +1,5 @@
 import logo from './logo.svg';
-import './App.css';
+
 import OrderSum from './pages/OrderSum';
 
 function App() {
