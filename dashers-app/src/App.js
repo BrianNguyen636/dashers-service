@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"; 
-import RestaurantPage from "./ResPage";
+import RestaurantPage from "./RestaurantPage";
 function App() { 
 return ( 
 <div className="app"> 
