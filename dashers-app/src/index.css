@@ -11,25 +11,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-.sidebar {
-  width: 250px;
-  position: fixed;
-  height: 100%;
-  transition: 0.5s;
-}
-
-.sidebar a {
-  padding: 15px 0;
-}
-
-.sidebar.open {
-  width: 0;
-}
-
-.toggled .sidebar {
-  width: 0;
-}
-
-.toggled .sidebar.open {
-  width: 250px;
-}
