@@ -38,9 +38,9 @@ app.use(cors());
 app.use(bodyParser.json());
 // ---------------------------------------------- 
 // (1) Retrieve all records in population table 
-// root URI: http://localhost:port/ 
-app.get('/', (request, response) => {
-    const sqlQuery = "SELECT * FROM population;";
+// root URI: http://localhost:3001/ 
+app.get('/restaurant', (request, response) => {
+    const sqlQuery = "SELECT * FROM Restaurant;"
     dbConnection.query(sqlQuery, (err, result) => {
         if (err) {
             return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
@@ -49,12 +49,23 @@ app.get('/', (request, response) => {
         return response.status(200).json(result);
     });
 });
+app.get('/restaurant/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "SELECT Name, Rating, Popular_Item, Image FROM Restaurant WHERE ID = '" + ID + "' ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        response.setHeader('ID', ID); // send a custom header attribute 
+        return response.status(200).json(result);
+    });
+});
 // ----------------------------------------------
 // Ref: https://expressjs.com/en/4x/api.html#app
 // (C)  Create a server such that it binds and
 //      listens on a specified host and port.
-//      We will use default host and port 3000.
-app.listen(3000, () => {
+//      We will use default host and port 4000.
+app.listen(4000, () => {
     console.log("Express server is running and listening");
 });
 
