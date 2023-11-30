@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './restaurantPage.css';
-import { Navbar, Nav, Card, Button } from 'react-bootstrap';
+import { Navbar, Nav, Card, Button, Form, FormControl } from 'react-bootstrap';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 const RestaurantPage = () => {
   const [restaurants, setRestaurants] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [hoveredCard, setHoveredCard] = useState(null);
 
   useEffect(() => {
     const getRestaurants = async () => {
@@ -20,6 +22,20 @@ const RestaurantPage = () => {
 
     getRestaurants();
   }, []);
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+const filteredRestaurants = restaurants.filter((restaurant) =>
+restaurant && restaurant.Name && restaurant.Name.toLowerCase().includes(searchTerm.toLowerCase())
+);
+const handleCardHover = (index) => {
+  setHoveredCard(index);
+};
+
+const handleCardLeave = () => {
+  setHoveredCard(null);
+};
+
   // Navbar state
   const [navbarOpen, setNavbarOpen] = useState(false);
   return (
@@ -38,14 +54,31 @@ const RestaurantPage = () => {
       {/* Main Content */}
       <div className="container mt-5">
         <h1 className="text-center mb-4">Explore Restaurants</h1>
+        <div>
+          {/* search bar */}
+        <Form className="mb-3">
+          <FormControl
+            type="text"
+            placeholder="Search for a restaurant..."
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+        </Form>
+        </div>
         <div className="row">
-          {restaurants.map((restaurant) => (
-            <div key={restaurant.ID} className="col-md-4 mb-4">
+          {filteredRestaurants.map((restaurant, index) => (
+            <div key={restaurant.ID} className="col-md-4 mb-4" onMouseEnter={() => handleCardHover(index)}
+            onMouseLeave={handleCardLeave}>
               <Link to={`/restaurant/detail/${restaurant.ID}` } style={{ textDecoration: 'none' }}>
               <Card className="custom-card">
                 <Card.Img variant="top" src={restaurant.Image} className="card-image"/>
                 <Card.Body>
                   <Card.Title>{restaurant.Name}</Card.Title>
+                  {hoveredCard === index && (
+                    <div className="blur-overlay">
+                      <p className="view-menu-text">View Full Menu</p>
+                    </div>
+                  )}
                   <Card.Text>Review: {restaurant.Rating}/10</Card.Text>
                   <Card.Text>Popular items: {restaurant.Popular_Item}</Card.Text>
                 </Card.Body>

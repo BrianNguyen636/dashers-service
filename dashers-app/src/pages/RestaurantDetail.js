@@ -44,9 +44,10 @@ const RestaurantDetail = () => {
                         <div className="image-container">
                         <img src = {restaurant[0].Image} className="image"></img>
                         </div>
-                        <h2 id="Title" className="text-left mt-3">{restaurant[0].Name}</h2>
-                        <p>Rating: {restaurant[0].Rating}</p>
-                        <p>Popular Item: {restaurant[0].Popular_Item}</p>
+                        <h1 id="Title" className="text-left mt-3">{restaurant[0].Name}</h1>
+                        <h4><p>Rating: {restaurant[0].Rating}</p>
+                        <p>Popular Item: {restaurant[0].Popular_Item}</p></h4>
+                        
                     </div>
                 ) : (
                     <p>Loading...</p>
