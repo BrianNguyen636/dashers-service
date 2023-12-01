@@ -6,7 +6,6 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-
 const RestaurantDetail = () => {
     const {ID} = useParams();
     const [restaurant, setRestaurant] = useState({});
@@ -27,7 +26,7 @@ const RestaurantDetail = () => {
     return (
         <div>
             {/* Navbar */}
-            <Navbar bg="dark" variant="dark">
+            <Navbar bg="dark" variant="dark" class = "navbar bg-dark">
                 <Navbar.Brand href="/order">
                     <Button variant="secondary" className="menu-btn">...</Button> Dashers
                 </Navbar.Brand>
