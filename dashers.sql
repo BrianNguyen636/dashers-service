@@ -53,6 +53,47 @@ CREATE TABLE `Items` (
   `Vegetarian` bit(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--MCDONALDS
+INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
+(000, 0, 'Entree', 'Big Mac', 6.99, 700, 0),
+(001, 0, 'Entree', 'McNuggets', 5.99, 650, 0),
+(002, 0, 'Entree', 'McChicken', 6.99, 700, 0),
+(003, 0, 'Entree', 'Salad', 7.99, 400, 1),
+(004, 0, 'Side', 'Small Fries', 1.99, 200, 1),
+(005, 0, 'Side', 'Large Fries', 3.99, 400, 1),
+(006, 0, 'Side', 'Hash Brown', 1.99, 300, 1),
+(007, 0, 'Drink', 'Small Drink', 1.99, 200, 1),
+(008, 0, 'Drink', 'Large Drink', 2.99, 300, 1),
+(009, 0, 'Dessert', 'Cookie', 1.99, 300, 1),
+(010, 0, 'Dessert', 'Milkshake', 3.99, 700, 1)
+--CHICKFILA
+INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
+(010, 1, 'Entree', 'Chicken Sandwich', 6.99, 700, 0),
+(011, 1, 'Entree', 'Deluxe Chicken Sandwich', 5.99, 650, 0),
+(012, 1, 'Entree', 'Grilled Chicken Sandwich', 6.99, 700, 0),
+(013, 1, 'Entree', 'Cobb Salad', 7.99, 400, 0),
+(014, 1, 'Side', 'Small Fries', 1.99, 200, 1),
+(015, 1, 'Side', 'Large Fries', 3.99, 400, 1),
+(016, 1, 'Entree', 'Chicken Nuggets', 1.99, 300, 0),
+(017, 1, 'Drink', 'Small Drink', 1.99, 200, 1),
+(018, 1, 'Drink', 'Large Drink', 2.99, 300, 1),
+(019, 1, 'Dessert', 'Cookie', 1.99, 300, 1),
+(020, 1, 'Dessert', 'Milkshake', 3.99, 700, 1)
+--Wendys
+INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
+(020, 2, 'Entree', 'Baconator', 6.99, 800, 0),
+(021, 2, 'Entree', 'Hamburger', 5.99, 650, 0),
+(022, 2, 'Entree', 'Chicken Sandwich', 6.99, 700, 0),
+(023, 2, 'Entree', 'Taco Salad', 7.99, 400, 0),
+(024, 2, 'Side', 'Chicken Nuggets', 4.99, 500, 0),
+(025, 2, 'Side', 'Small Fries', 1.99, 200, 1),
+(026, 2, 'Side', 'Large Fries', 3.99, 300, 0),
+(027, 2, 'Drink', 'Small Drink', 1.99, 200, 1),
+(028, 2, 'Drink', 'Large Drink', 2.99, 300, 1),
+(029, 2, 'Dessert', 'Cookie', 1.99, 300, 1),
+(030, 2, 'Dessert', 'Milkshake', 3.99, 700, 1)
+
+
 -- --------------------------------------------------------
 
 --
