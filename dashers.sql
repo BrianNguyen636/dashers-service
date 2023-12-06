@@ -21,12 +21,15 @@ SET time_zone = "+00:00";
 -- Database: `dashers`
 --
 
+DROP DATABASE IF EXISTS dashers;
+CREATE DATABASE dashers;
+USE dashers;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `Customers`
 --
-
+DROP TABLE IF EXISTS `Customers`;
 CREATE TABLE `Customers` (
   `CustomerID` varchar(255) NOT NULL,
   `Name` varchar(255) DEFAULT NULL,
@@ -42,10 +45,10 @@ CREATE TABLE `Customers` (
 --
 -- Table structure for table `Items`
 --
-
+DROP TABLE IF EXISTS `Items`;
 CREATE TABLE `Items` (
   `ItemID` bigint(20) UNSIGNED NOT NULL,
-  `StoreID` bigint(20) UNSIGNED NOT NULL,
+  `RestaurantID` bigint(20) UNSIGNED NOT NULL,
   `Category` varchar(255) DEFAULT NULL,
   `Name` varchar(255) DEFAULT NULL,
   `Price` decimal(18,2) DEFAULT NULL,
@@ -53,8 +56,8 @@ CREATE TABLE `Items` (
   `Vegetarian` bit(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---MCDONALDS
-INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
+-- MCDONALDS
+INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
 (000, 0, 'Entree', 'Big Mac', 6.99, 700, 0),
 (001, 0, 'Entree', 'McNuggets', 5.99, 650, 0),
 (002, 0, 'Entree', 'Salad', 7.99, 400, 1),
@@ -64,9 +67,9 @@ INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories
 (006, 0, 'Drink', 'Small Drink', 1.99, 200, 1),
 (007, 0, 'Drink', 'Large Drink', 2.99, 300, 1),
 (008, 0, 'Dessert', 'Cookie', 1.99, 300, 1),
-(009, 0, 'Dessert', 'Milkshake', 3.99, 700, 1)
---CHICKFILA
-INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
+(009, 0, 'Dessert', 'Milkshake', 3.99, 700, 1);
+-- CHICKFILA
+INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
 (010, 1, 'Entree', 'Chicken Sandwich', 6.99, 700, 0),
 (011, 1, 'Entree', 'Deluxe Chicken Sandwich', 5.99, 650, 0),
 (012, 1, 'Entree', 'Cobb Salad', 7.99, 400, 0),
@@ -76,9 +79,9 @@ INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories
 (016, 1, 'Drink', 'Small Drink', 1.99, 200, 1),
 (017, 1, 'Drink', 'Large Drink', 2.99, 300, 1),
 (018, 1, 'Dessert', 'Cookie', 1.99, 300, 1),
-(019, 1, 'Dessert', 'Milkshake', 3.99, 700, 1)
---Wendys
-INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
+(019, 1, 'Dessert', 'Milkshake', 3.99, 700, 1);
+-- Wendys
+INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
 (020, 2, 'Entree', 'Baconator', 6.99, 800, 0),
 (021, 2, 'Entree', 'Hamburger', 5.99, 650, 0),
 (022, 2, 'Entree', 'Taco Salad', 7.99, 400, 0),
@@ -88,9 +91,9 @@ INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories
 (026, 2, 'Drink', 'Small Drink', 1.99, 200, 1),
 (027, 2, 'Drink', 'Large Drink', 2.99, 300, 1),
 (028, 2, 'Dessert', 'Cookie', 1.99, 300, 1),
-(029, 2, 'Dessert', 'Milkshake', 3.99, 700, 1)
---Panda Express
-INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
+(029, 2, 'Dessert', 'Milkshake', 3.99, 700, 1);
+-- Panda Express
+INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
 (030, 3, 'Entree', 'Bowl', 7.99, 800, 0),
 (031, 3, 'Entree', 'Plate', 8.99, 900, 0),
 (032, 3, 'Entree', 'Ala Carte', 2.99, 300, 0),
@@ -100,9 +103,9 @@ INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories
 (036, 3, 'Drink', 'Small Drink', 1.99, 200, 1),
 (037, 3, 'Drink', 'Large Drink', 2.99, 300, 1),
 (038, 3, 'Side', 'Egg Roll', 1.99, 300, 0),
-(039, 3, 'Side', 'Ragoon', 2.99, 300, 1)
---Popeyes
-INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
+(039, 3, 'Side', 'Ragoon', 2.99, 300, 1);
+-- Popeyes
+INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
 (040, 4, 'Entree', 'Chicken Sandwich', 7.99, 800, 0),
 (041, 4, 'Entree', '10pc Chicken', 10.99, 1200, 0),
 (042, 4, 'Entree', '6pc Chicken', 7.99, 900, 0),
@@ -112,9 +115,9 @@ INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories
 (046, 4, 'Side', 'Cajun Fries', 2.99, 400, 1),
 (047, 4, 'Drink', 'Small Drink', 1.99, 200, 1),
 (048, 4, 'Drink', 'Large Drink', 2.99, 300, 1),
-(049, 4, 'Side', 'Biscuit', 0.99, 100, 1)
---Burger King
-INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
+(049, 4, 'Side', 'Biscuit', 0.99, 100, 1);
+-- Burger King
+INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
 (050, 5, 'Entree', 'Whopper', 6.99, 800, 0),
 (051, 5, 'Entree', 'Double BK Stacker', 8.99, 1000, 0),
 (052, 5, 'Entree', 'Double Whopper', 7.99, 900, 0),
@@ -124,67 +127,67 @@ INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories
 (056, 5, 'Side', 'Fries', 2.99, 400, 1),
 (057, 5, 'Drink', 'Small Drink', 1.99, 200, 1),
 (058, 5, 'Drink', 'Large Drink', 2.99, 300, 1),
-(059, 5, 'Dessert', 'Ice Cream', 1.99, 100, 1)
---Dick's Drive-in
-INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
-(050, 6, 'Entree', 'Hamburger', 2.99, 500, 0),
-(051, 6, 'Entree', 'Deluxe Cheeseburger', 5.49, 800, 0),
-(052, 6, 'Entree', 'Cheeseburger', 3.49, 600, 0),
-(053, 6, 'Entree', 'Special Burger', 3.29, 500, 1),
-(054, 6, 'Dessert', 'Milkshake', 3.99, 500, 1),
-(055, 6, 'Dessert', 'Root Beer float', 3.99, 600, 1),
-(056, 6, 'Side', 'Fries', 2.99, 400, 1),
-(057, 6, 'Drink', 'Small Drink', 1.99, 200, 1),
-(058, 6, 'Drink', 'Large Drink', 2.99, 300, 1),
-(059, 6, 'Dessert', 'Ice Cream', 1.99, 100, 1)
---IHOP
-INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
-(060, 7, 'Entree', 'Pancakes', 4.99, 300, 1),
-(061, 7, 'Entree', 'Omelette', 6.99, 800, 0),
-(062, 7, 'Entree', 'Chicken Fried-Steak', 7.49, 600, 0),
-(063, 7, 'Entree', 'Burger', 5.99, 500, 0),
-(064, 7, 'Entree', 'Waffles', 3.99, 500, 1),
-(065, 7, 'Dessert', 'Biscuit', 3.99, 600, 1),
-(066, 7, 'Side', 'Hash Browns', 2.99, 400, 1),
-(067, 7, 'Drink', 'Small Drink', 1.99, 200, 1),
-(068, 7, 'Drink', 'Large Drink', 2.99, 300, 1),
-(069, 7, 'Dessert', 'Ice Cream', 1.99, 100, 1)
---Red Robin
-INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
-(070, 8, 'Entree', 'Hamburger', 4.99, 600, 0),
-(071, 8, 'Entree', 'Deluxe Cheeseburger', 6.49, 800, 0),
-(072, 8, 'Entree', 'Cheeseburger', 5.49, 600, 0),
-(073, 8, 'Entree', 'Salad', 6.29, 400, 1),
-(074, 8, 'Dessert', 'Milkshake', 3.99, 500, 1),
-(075, 8, 'Side', 'Onion Rings', 3.99, 500, 1),
-(076, 8, 'Side', 'Fries', 2.99, 400, 1),
-(077, 8, 'Drink', 'Small Drink', 1.99, 200, 1),
-(078, 8, 'Drink', 'Large Drink', 2.99, 300, 1),
-(079, 8, 'Dessert', 'Ice Cream', 1.99, 100, 1)
---Denny's
-INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
-(080, 10, 'Entree', 'Pancakes', 4.99, 300, 1),
-(081, 10, 'Entree', 'Omelette', 6.99, 800, 0),
-(082, 10, 'Entree', 'Burger', 5.99, 500, 0),
-(083, 10, 'Entree', 'Waffles', 3.99, 500, 1),
-(084, 10, 'Dessert', 'Biscuit', 3.99, 600, 1),
-(085, 10, 'Side', 'Hash Browns', 2.99, 400, 1),
-(086, 10, 'Drink', 'Small Drink', 1.99, 200, 1),
-(087, 10, 'Drink', 'Large Drink', 2.99, 300, 1),
-(088, 10, 'Dessert', 'Ice Cream', 1.99, 100, 1),
-(089, 10, 'Drink', 'Coffee', 1.99, 100, 1)
---Taco Bell
-INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
-(090, 11, 'Entree', 'Taco', 2.99, 300, 1),
-(091, 11, 'Entree', 'Taco Supreme', 4.99, 800, 0),
-(092, 11, 'Entree', 'Burrito', 5.99, 500, 0),
-(093, 11, 'Entree', 'Chalupa', 5.99, 500, 0),
-(094, 11, 'Dessert', 'Churro', 2.99, 600, 1),
-(095, 11, 'Side', 'Tater Tots', 2.99, 400, 1),
-(096, 11, 'Drink', 'Small Drink', 1.99, 200, 1),
-(097, 11, 'Drink', 'Large Drink', 2.99, 300, 1),
-(098, 11, 'Dessert', 'Ice Cream', 1.99, 100, 1),
-(099, 11, 'Side', 'Nachos', 1.99, 100, 1)
+(059, 5, 'Dessert', 'Ice Cream', 1.99, 100, 1);
+-- Dick's Drive-in
+INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
+(060, 6, 'Entree', 'Hamburger', 2.99, 500, 0),
+(061, 6, 'Entree', 'Deluxe Cheeseburger', 5.49, 800, 0),
+(062, 6, 'Entree', 'Cheeseburger', 3.49, 600, 0),
+(063, 6, 'Entree', 'Special Burger', 3.29, 500, 1),
+(064, 6, 'Dessert', 'Milkshake', 3.99, 500, 1),
+(065, 6, 'Dessert', 'Root Beer float', 3.99, 600, 1),
+(066, 6, 'Side', 'Fries', 2.99, 400, 1),
+(067, 6, 'Drink', 'Small Drink', 1.99, 200, 1),
+(068, 6, 'Drink', 'Large Drink', 2.99, 300, 1),
+(069, 6, 'Dessert', 'Ice Cream', 1.99, 100, 1);
+-- IHOP
+INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
+(070, 7, 'Entree', 'Pancakes', 4.99, 300, 1),
+(071, 7, 'Entree', 'Omelette', 6.99, 800, 0),
+(072, 7, 'Entree', 'Chicken Fried-Steak', 7.49, 600, 0),
+(073, 7, 'Entree', 'Burger', 5.99, 500, 0),
+(074, 7, 'Entree', 'Waffles', 3.99, 500, 1),
+(075, 7, 'Dessert', 'Biscuit', 3.99, 600, 1),
+(076, 7, 'Side', 'Hash Browns', 2.99, 400, 1),
+(077, 7, 'Drink', 'Small Drink', 1.99, 200, 1),
+(078, 7, 'Drink', 'Large Drink', 2.99, 300, 1),
+(079, 7, 'Dessert', 'Ice Cream', 1.99, 100, 1);
+-- Red Robin
+INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
+(080, 8, 'Entree', 'Hamburger', 4.99, 600, 0),
+(081, 8, 'Entree', 'Deluxe Cheeseburger', 6.49, 800, 0),
+(082, 8, 'Entree', 'Cheeseburger', 5.49, 600, 0),
+(083, 8, 'Entree', 'Salad', 6.29, 400, 1),
+(084, 8, 'Dessert', 'Milkshake', 3.99, 500, 1),
+(085, 8, 'Side', 'Onion Rings', 3.99, 500, 1),
+(086, 8, 'Side', 'Fries', 2.99, 400, 1),
+(087, 8, 'Drink', 'Small Drink', 1.99, 200, 1),
+(088, 8, 'Drink', 'Large Drink', 2.99, 300, 1),
+(089, 8, 'Dessert', 'Ice Cream', 1.99, 100, 1);
+-- Denny's
+INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
+(090, 10, 'Entree', 'Pancakes', 4.99, 300, 1),
+(091, 10, 'Entree', 'Omelette', 6.99, 800, 0),
+(092, 10, 'Entree', 'Burger', 5.99, 500, 0),
+(093, 10, 'Entree', 'Waffles', 3.99, 500, 1),
+(094, 10, 'Dessert', 'Biscuit', 3.99, 600, 1),
+(095, 10, 'Side', 'Hash Browns', 2.99, 400, 1),
+(096, 10, 'Drink', 'Small Drink', 1.99, 200, 1),
+(097, 10, 'Drink', 'Large Drink', 2.99, 300, 1),
+(098, 10, 'Dessert', 'Ice Cream', 1.99, 100, 1),
+(099, 10, 'Drink', 'Coffee', 1.99, 100, 1);
+-- Taco Bell
+INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
+(100, 11, 'Entree', 'Taco', 2.99, 300, 1),
+(101, 11, 'Entree', 'Taco Supreme', 4.99, 800, 0),
+(102, 11, 'Entree', 'Burrito', 5.99, 500, 0),
+(103, 11, 'Entree', 'Chalupa', 5.99, 500, 0),
+(104, 11, 'Dessert', 'Churro', 2.99, 600, 1),
+(105, 11, 'Side', 'Tater Tots', 2.99, 400, 1),
+(106, 11, 'Drink', 'Small Drink', 1.99, 200, 1),
+(107, 11, 'Drink', 'Large Drink', 2.99, 300, 1),
+(108, 11, 'Dessert', 'Ice Cream', 1.99, 100, 1),
+(109, 11, 'Side', 'Nachos', 1.99, 100, 1);
 
 
 -- --------------------------------------------------------
@@ -192,7 +195,7 @@ INSERT INTO `Items` (`ItemID`, `StoreID`, `Category`, `Name`, `Price`, `Calories
 --
 -- Table structure for table `OrderItems`
 --
-
+DROP TABLE IF EXISTS `OrderItems`;
 CREATE TABLE `OrderItems` (
   `OrderID` bigint(20) UNSIGNED NOT NULL,
   `ItemID` bigint(20) UNSIGNED NOT NULL,
@@ -204,7 +207,7 @@ CREATE TABLE `OrderItems` (
 --
 -- Table structure for table `Orders`
 --
-
+DROP TABLE IF EXISTS `Orders`;
 CREATE TABLE `Orders` (
   `OrderID` bigint(20) UNSIGNED NOT NULL,
   `CustomerID` varchar(255) DEFAULT NULL,
@@ -218,20 +221,20 @@ CREATE TABLE `Orders` (
 --
 -- Table structure for table `Restaurant`
 --
-
+DROP TABLE IF EXISTS `Restaurant`;
 CREATE TABLE `Restaurant` (
   `Name` varchar(255) NOT NULL,
   `Popular_Item` varchar(255) NOT NULL,
   `Rating` int(10) NOT NULL,
   `Image` varchar(255) NOT NULL,
-  `ID` int(10) NOT NULL
+  `RestaurantID` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `Restaurant`
 --
 
-INSERT INTO `Restaurant` (`Name`, `Popular_Item`, `Rating`, `Image`, `ID`) VALUES
+INSERT INTO `Restaurant` (`Name`, `Popular_Item`, `Rating`, `Image`, `RestaurantID`) VALUES
 ('Burger King', 'Whopper', 4, '/images/burgerking.png', 5),
 ('Chickfila', 'Chicken Sandwich', 10, '/images/chickfila.jpeg', 1),
 ('Denny\'s', 'Omelette', 2, '/images/denny.png', 10),
@@ -248,18 +251,6 @@ INSERT INTO `Restaurant` (`Name`, `Popular_Item`, `Rating`, `Image`, `ID`) VALUE
 -- --------------------------------------------------------
 
 --
--- Table structure for table `Stores`
---
-
-CREATE TABLE `Stores` (
-  `StoreID` bigint(20) UNSIGNED NOT NULL,
-  `Name` varchar(255) DEFAULT NULL,
-  `Address` varchar(255) DEFAULT NULL,
-  `City` varchar(255) DEFAULT NULL,
-  `Rating` decimal(18,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
 -- Indexes for dumped tables
 --
 
@@ -274,7 +265,7 @@ ALTER TABLE `Customers`
 --
 ALTER TABLE `Items`
   ADD PRIMARY KEY (`ItemID`),
-  ADD KEY `StoreID` (`StoreID`);
+  ADD KEY `RestaurantID` (`RestaurantID`);
 
 --
 -- Indexes for table `OrderItems`
@@ -294,13 +285,7 @@ ALTER TABLE `Orders`
 -- Indexes for table `Restaurant`
 --
 ALTER TABLE `Restaurant`
-  ADD PRIMARY KEY (`Name`);
-
---
--- Indexes for table `Stores`
---
-ALTER TABLE `Stores`
-  ADD PRIMARY KEY (`StoreID`);
+  ADD PRIMARY KEY (`RestaurantID`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -319,10 +304,10 @@ ALTER TABLE `Orders`
   MODIFY `OrderID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `Stores`
+-- AUTO_INCREMENT for table `Restaurant`
 --
-ALTER TABLE `Stores`
-  MODIFY `StoreID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+ALTER TABLE `Restaurant`
+  MODIFY `RestaurantID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -332,7 +317,7 @@ ALTER TABLE `Stores`
 -- Constraints for table `Items`
 --
 ALTER TABLE `Items`
-  ADD CONSTRAINT `items_ibfk_1` FOREIGN KEY (`StoreID`) REFERENCES `Stores` (`StoreID`);
+  ADD CONSTRAINT `items_ibfk_1` FOREIGN KEY (`RestaurantID`) REFERENCES `Restaurant` (`RestaurantID`);
 
 --
 -- Constraints for table `OrderItems`

@@ -67,9 +67,9 @@ const handleCardLeave = () => {
         </div>
         <div className="row">
           {filteredRestaurants.map((restaurant, index) => (
-            <div key={restaurant.ID} className="col-md-4 mb-4" onMouseEnter={() => handleCardHover(index)}
+            <div key={restaurant.RestaurantID} className="col-md-4 mb-4" onMouseEnter={() => handleCardHover(index)}
             onMouseLeave={handleCardLeave}>
-              <Link to={`/restaurant/detail/${restaurant.ID}` } style={{ textDecoration: 'none' }}>
+              <Link to={`/restaurant/detail/${restaurant.RestaurantID}` } style={{ textDecoration: 'none' }}>
               <Card className="custom-card">
                 <Card.Img variant="top" src={restaurant.Image} className="card-image"/>
                 <Card.Body>

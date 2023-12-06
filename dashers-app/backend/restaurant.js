@@ -49,9 +49,21 @@ app.get('/restaurant', (request, response) => {
         return response.status(200).json(result);
     });
 });
-app.get('/restaurant/:ID', (request, response) => {
+app.get('/restaurant/:RestaurantID', (request, response) => {
+    const ID = request.params.RestaurantID;
+    console.log(ID);
+    const sqlQuery = "SELECT Name, Rating, Popular_Item, Image FROM Restaurant WHERE RestaurantID = '" + ID + "' ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        response.setHeader('RestaurantID', ID); // send a custom header attribute 
+        return response.status(200).json(result);
+    });
+});
+app.get('/restaurant/Menu/:ID', (request, response) => {
     const ID = request.params.ID;
-    const sqlQuery = "SELECT Name, Rating, Popular_Item, Image FROM Restaurant WHERE ID = '" + ID + "' ;";
+    const sqlQuery = "SELECT Name FROM ITEMS WHERE RestaurantID = '" + ID + "' ;";
     dbConnection.query(sqlQuery, (err, result) => {
         if (err) {
             return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
