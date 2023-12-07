@@ -60,6 +60,57 @@ app.get('/restaurant/:ID', (request, response) => {
         return response.status(200).json(result);
     });
 });
+// ----------------------------------------
+// Retrieve items from restaurant
+// GET all items from restaurantid
+app.get('/restaurant/:ID/items', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "SELECT * FROM items WHERE RestaurantID = '" + ID + "' ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        response.setHeader('ID', ID); // send a custom header attribute 
+        return response.status(200).json(result);
+    });
+});
+app.get('/items/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "SELECT * FROM items WHERE ItemID = '" + ID + "' ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        response.setHeader('ID', ID); // send a custom header attribute 
+        return response.status(200).json(result);
+    });
+});
+// GET all vegetarian items from restaurantid
+app.get('/restaurant/:ID/items/vegetarian', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "SELECT * FROM items WHERE RestaurantID = '" + ID + "' and vegetarian = 1 ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        response.setHeader('ID', ID); // send a custom header attribute 
+        return response.status(200).json(result);
+    });
+});
+// GET all items from a certain category from restaurantid
+app.get('/restaurant/:ID/:category', (request, response) => {
+    const ID = request.params.ID;
+    const category = request.params.category;
+    const sqlQuery = "SELECT * FROM items WHERE RestaurantID = '" + ID + "' and category = '" + category + "' ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        response.setHeader('ID', ID); // send a custom header attribute 
+        return response.status(200).json(result);
+    });
+});
+
 // ----------------------------------------------
 // Ref: https://expressjs.com/en/4x/api.html#app
 // (C)  Create a server such that it binds and
