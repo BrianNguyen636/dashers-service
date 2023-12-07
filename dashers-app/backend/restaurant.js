@@ -122,6 +122,20 @@ app.get('/restaurant/:ID/:category', (request, response) => {
         return response.status(200).json(result);
     });
 });
+// ----------------------------------------------------------------
+// CUSTOMERS
+// GET information from customerID
+app.get('/customer/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "SELECT * FROM customers WHERE CustomerID = '" + ID + "' ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        response.setHeader('ID', ID); // send a custom header attribute 
+        return response.status(200).json(result);
+    });
+});
 
 // ----------------------------------------------
 // Ref: https://expressjs.com/en/4x/api.html#app

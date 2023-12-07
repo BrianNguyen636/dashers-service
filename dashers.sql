@@ -41,6 +41,10 @@ CREATE TABLE `Customers` (
   `Password` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `Customers` (`CustomerID`, `Name`, `PrimaryAddress`, `SecondaryAddress`, `Email`, `Username`, `Password`) VALUES
+(0, 'John Doe', '1111 Bogus Street', '2222 Sham Ave', 'email@test.com', 'JDoe111', 'testpassword');
+
+
 -- --------------------------------------------------------
 
 --
