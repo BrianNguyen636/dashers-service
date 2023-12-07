@@ -1,3 +1,4 @@
+
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
@@ -188,18 +189,7 @@ INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Cal
 (107, 11, 'Drink', 'Large Drink', 2.99, 300, 1),
 (108, 11, 'Dessert', 'Ice Cream', 1.99, 100, 1),
 (109, 11, 'Side', 'Nachos', 1.99, 100, 1);
--- Jack in the Box
-INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
-(110, 12, 'Entree', 'Hamburger', 3.99, 600, 0),
-(111, 12, 'Entree', 'Mini-Taco', 0.99, 300, 0),
-(112, 12, 'Entree', 'Cheeseburger', 4.49, 600, 0),
-(113, 12, 'Entree', 'Salad', 5.29, 400, 1),
-(114, 12, 'Dessert', 'Milkshake', 3.99, 500, 1),
-(115, 12, 'Side', 'Curly Fries', 2.99, 500, 1),
-(116, 12, 'Side', 'Fries', 2.99, 400, 1),
-(117, 12, 'Drink', 'Small Drink', 1.99, 200, 1),
-(118, 12, 'Drink', 'Large Drink', 2.99, 300, 1),
-(119, 12, 'Dessert', 'Ice Cream', 1.99, 100, 1);
+
 
 -- --------------------------------------------------------
 
@@ -343,7 +333,3 @@ ALTER TABLE `OrderItems`
 ALTER TABLE `Orders`
   ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`CustomerID`) REFERENCES `Customers` (`CustomerID`);
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

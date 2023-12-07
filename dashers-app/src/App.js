@@ -10,7 +10,7 @@ return (
 <BrowserRouter> 
 <Routes> 
   <Route path="/res" element={<RestaurantPage />} />
-  <Route path="/restaurant/detail/:ID" element={<RestaurantDetail />} />
+  <Route path="/restaurant/detail/:RestaurantID" element={<RestaurantDetail />} />
   <Route path="/order" element={<OrderSum />} />
 </Routes> 
 <div id = "main"> </div>

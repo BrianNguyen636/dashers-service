@@ -7,12 +7,12 @@ import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
 const RestaurantDetail = () => {
-    const {ID} = useParams();
+    const { RestaurantID } = useParams();
     const [restaurant, setRestaurant] = useState({});
     useEffect(() => {
         const getRestaurant = async () => {
             try {
-                const response = await axios.get(`http://localhost:4000/restaurant/${ID}`);
+                const response = await axios.get(`http://localhost:4000/restaurant/Menu/${RestaurantID}`);
                 setRestaurant(response.data);
             } catch (error) {
                 console.error('Error fetching restaurant data:', error);
@@ -26,7 +26,7 @@ const RestaurantDetail = () => {
     return (
         <div>
             {/* Navbar */}
-            <Navbar bg="dark" variant="dark" class = "navbar bg-dark">
+            <Navbar bg="dark" variant="dark" class="navbar bg-dark">
                 <Navbar.Brand href="/order">
                     <Button variant="secondary" className="menu-btn">...</Button> Dashers
                 </Navbar.Brand>
@@ -35,18 +35,40 @@ const RestaurantDetail = () => {
                     <Nav.Link href="/res">Restaurant</Nav.Link>
                 </Nav>
             </Navbar>
-            {/* Main Content */}
             <div className="container mt-5">
-                <h1 className="text-center mb-4">{restaurant.Name} Details</h1>
+                <h1 className="text-center mb-4">{restaurant.Name} Menu</h1>
                 {Object.keys(restaurant).length > 0 ? (
                     <div>
                         <div className="image-container">
-                        <img src = {restaurant[0].Image} className="image"></img>
+                            <p>rest</p>
+                            <img src={restaurant[0].Image} alt={restaurant[0].Name} className="image" />
                         </div>
                         <h1 id="Title" className="text-left mt-3">{restaurant[0].Name}</h1>
-                        <h4><p>Rating: {restaurant[0].Rating}</p>
-                        <p>Popular Item: {restaurant[0].Popular_Item}</p></h4>
-                        
+                        <h4>
+                            <p>Rating: {restaurant[0].Rating}</p>
+                            <p>Popular Item: {restaurant[0].Popular_Item}</p>
+                        </h4>
+                        {// NEEDS TO BE DONE
+                        }
+                        {/* <div className="menu-items mt-4">
+                            {restaurant.Menu && restaurant.Menu.length > 0 ? (
+                                <div>
+                                    {restaurant.Menu.map((menuItem, index) => (
+                                        <Card key={index} className="mb-3">
+                                            <Card.Body>
+                                                <Card.Title>{menuItem.Name}</Card.Title>
+                                                <Card.Text>
+                                                    <p>{menuItem.Description}</p>
+                                                    <p>Price: ${menuItem.Price}</p>
+                                                </Card.Text>
+                                            </Card.Body>
+                                        </Card>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p>No menu items available.</p>
+                            )}
+                        </div> */}
                     </div>
                 ) : (
                     <p>Loading...</p>
