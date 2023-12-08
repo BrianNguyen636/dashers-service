@@ -73,7 +73,20 @@ app.get('/restaurant/Menu/:ID', (request, response) => {
     });
 });
 // ----------------------------------------
-// Retrieve items from restaurant
+// ITEMS
+
+// GET Item by ID
+app.get('/items/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "SELECT * FROM items WHERE ItemID = '" + ID + "' ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        response.setHeader('ID', ID); // send a custom header attribute 
+        return response.status(200).json(result);
+    });
+});
 // GET all items from restaurantid
 app.get('/restaurant/:ID/items', (request, response) => {
     const ID = request.params.ID;
@@ -86,17 +99,7 @@ app.get('/restaurant/:ID/items', (request, response) => {
         return response.status(200).json(result);
     });
 });
-app.get('/items/:ID', (request, response) => {
-    const ID = request.params.ID;
-    const sqlQuery = "SELECT * FROM items WHERE ItemID = '" + ID + "' ;";
-    dbConnection.query(sqlQuery, (err, result) => {
-        if (err) {
-            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
-        }
-        response.setHeader('ID', ID); // send a custom header attribute 
-        return response.status(200).json(result);
-    });
-});
+
 // GET all vegetarian items from restaurantid
 app.get('/restaurant/:ID/items/vegetarian', (request, response) => {
     const ID = request.params.ID;
@@ -124,6 +127,7 @@ app.get('/restaurant/:ID/:category', (request, response) => {
 });
 // ----------------------------------------------------------------
 // CUSTOMERS
+
 // GET information from customerID
 app.get('/customer/:ID', (request, response) => {
     const ID = request.params.ID;
@@ -175,6 +179,7 @@ app.get('/coupons/restaurant/:ID', (request, response) => {
 });
 // ----------------------------------------------------------------
 // REVIEWS
+
 // GET Reviews 
 app.get('/review', (request, response) => {
     const sqlQuery = "SELECT * FROM reviews;";
@@ -210,6 +215,131 @@ app.get('/review/restaurant/:ID', (request, response) => {
     });
 });
 
+// ----------------------------------------------------------------
+// Orders
+
+// GET Orders
+app.get('/orders', (request, response) => {
+    const sqlQuery = "SELECT * FROM orders";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        return response.status(200).json(result);
+    });
+});
+// GET all Orders given CustomerID
+app.get('customer/orders/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "SELECT * FROM orders WHERE CustomerID = '" + ID + "' ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        response.setHeader('ID', ID); // send a custom header attribute 
+        return response.status(200).json(result);
+    });
+});
+// GET Order given ID
+app.get('/orders/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "SELECT * FROM orders WHERE OrderID = '" + ID + "' ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        response.setHeader('ID', ID); // send a custom header attribute 
+        return response.status(200).json(result);
+    });
+});
+//INSERT Order by CustomerID
+app.post('/orders', (request, response) => {
+    const sqlQuery = 'INSERT INTO Orders VALUES (?);';
+    const values = [request.body.OrderID, request.body.CustomerID, request.body.DeliveryAddress, 
+        request.body.PaymentStatus, request.body.OrderStatus];
+    dbConnection.query(sqlQuery, [values], (err, result) => {
+        if (err) {
+            return response.status(400).json({Error: "Failed: Record was not added."})
+        }
+        return response.status(200).json({Success: "Successful: Record was added!"});
+    });
+});
+//UPDATE RECORD BY CustomerID
+app.put('/orders/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = 'UPDATE Orders SET OrderID = ?, CustomerID = ?, DeliveryAddress = ?, PaymentStatus = ?, OrderStatus = ? WHERE OrderID = ? ;';
+    const values = [request.body.OrderID, request.body.CustomerID, request.body.DeliveryAddress, 
+        request.body.PaymentStatus, request.body.OrderStatus];
+
+    dbConnection.query(sqlQuery, [...values, ID], (err, result) => {
+        if (err) {
+            return response.status(400).json({Error: "Failed: Record was not updated."})
+        }
+        return response.status(200).json({Success: "Successful: Record was updated!"});
+    });
+});
+//DELETE RECORD BY OrderID
+app.delete('/orders/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "DELETE FROM orders WHERE OrderID = ? ; ";
+    dbConnection.query(sqlQuery, ID, (err, result) => {
+    if (err) {
+        return response.status(400).json({ Error: "Failed: Record was not deleted" });
+    }
+        return response.status(200).json({ Success: "Succcessful: Record was deleted!" });
+    });
+});
+
+// ----------------------------------------------------------------
+// OrderItems
+// GET OrderItems from ID
+app.get('/orders/:ID/items', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "SELECT * FROM orderitems where OrderID = ?";
+    dbConnection.query(sqlQuery, ID, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        return response.status(200).json(result);
+    });
+});
+// POST Item into Order 
+app.post('/orders/:ID/items', (request, response) => {
+    const sqlQuery = 'INSERT INTO orderitems VALUES (?);';
+    const values = [request.body.OrderID, request.body.ItemID, request.body.Quantity];
+    dbConnection.query(sqlQuery, [values], (err, result) => {
+        if (err) {
+            return response.status(400).json({Error: "Failed: Record was not added."})
+        }
+        return response.status(200).json({Success: "Successful: Record was added!"});
+    });
+});
+// PUT Update Item in Order 
+app.put('/orders/:ID/items/:ItemID', (request, response) => {
+    const ID = request.params.ID;
+    const ItemID = request.params.ItemID;
+    const sqlQuery = 'UPDATE orderitems SET OrderID = ?, ItemID = ?, Quantity = ? WHERE OrderID = ? AND ItemID = ?;';
+
+    const values = [request.body.OrderID, request.body.ItemID, request.body.Quantity];
+    dbConnection.query(sqlQuery, [...values, ID, ItemID], (err, result) => {
+        if (err) {
+            return response.status(400).json({Error: "Failed: Record was not updated."})
+        }
+        return response.status(200).json({Success: "Successful: Record was updated!"});
+    });
+});
+//DELETE RECORD BY OrderID and ItemID
+app.delete('/orders/:ID/items/:ItemID', (request, response) => {
+    const ID = request.params.ID;
+    const ItemID = request.params.ItemID;
+    const sqlQuery = "DELETE FROM orderitems WHERE OrderID = ? AND ItemID = ? ; ";
+    dbConnection.query(sqlQuery, [ID, ItemID], (err, result) => {
+    if (err) {
+        return response.status(400).json({ Error: "Failed: Record was not deleted" });
+    }
+        return response.status(200).json({ Success: "Succcessful: Record was deleted!" });
+    });
+});
 // ----------------------------------------------
 // Ref: https://expressjs.com/en/4x/api.html#app
 // (C)  Create a server such that it binds and
