@@ -136,6 +136,79 @@ app.get('/customer/:ID', (request, response) => {
         return response.status(200).json(result);
     });
 });
+// ----------------------------------------------------------------
+// COUPONS
+
+// GET all available coupons
+app.get('/coupons', (request, response) => {
+    const sqlQuery = "SELECT * FROM coupons ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        return response.status(200).json(result);
+    });
+});
+// GET coupon from it's ID
+app.get('/coupons/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "SELECT * FROM coupons WHERE CouponID = '" + ID + "' ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        response.setHeader('ID', ID); // send a custom header attribute 
+        return response.status(200).json(result);
+    });
+});
+// GET coupons from a given restaurant
+app.get('/coupons/restaurant/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "SELECT * FROM coupons WHERE RestaurantID = '" + ID + "' ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        response.setHeader('ID', ID); // send a custom header attribute 
+        return response.status(200).json(result);
+    });
+});
+// ----------------------------------------------------------------
+// REVIEWS
+// GET Reviews 
+app.get('/review', (request, response) => {
+    const sqlQuery = "SELECT * FROM reviews;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        return response.status(200).json(result);
+    });
+});
+// GET Review by ID
+app.get('/review/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "SELECT * FROM reviews WHERE ReviewID = '" + ID + "' ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        response.setHeader('ID', ID); // send a custom header attribute 
+        return response.status(200).json(result);
+    });
+});
+// GET Reviews from a given restaurant
+app.get('/review/restaurant/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "SELECT * FROM reviews WHERE RestaurantID = '" + ID + "' ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        response.setHeader('ID', ID); // send a custom header attribute 
+        return response.status(200).json(result);
+    });
+});
 
 // ----------------------------------------------
 // Ref: https://expressjs.com/en/4x/api.html#app

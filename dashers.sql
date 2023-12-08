@@ -42,7 +42,7 @@ CREATE TABLE `Customers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `Customers` (`CustomerID`, `Name`, `PrimaryAddress`, `SecondaryAddress`, `Email`, `Username`, `Password`) VALUES
-(0, 'John Doe', '1111 Bogus Street', '2222 Sham Ave', 'email@test.com', 'JDoe111', 'testpassword');
+(0, 'John Doe', '1111 Bogus Street', '2222 Sham Ave', 'email@test.com', 'testuser', 'testpassword');
 
 
 -- --------------------------------------------------------
@@ -256,6 +256,42 @@ INSERT INTO `Restaurant` (`Name`, `Popular_Item`, `Rating`, `Image`, `Restaurant
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `Coupons`
+--
+DROP TABLE IF EXISTS `Coupons`;
+CREATE TABLE `Coupons` (
+  `CouponID` bigint(20) UNSIGNED NOT NULL,
+  `RestaurantID` bigint(20) UNSIGNED NOT NULL,
+  `ItemID` bigint(20) UNSIGNED NOT NULL,
+  `Discount` int(3) NOT NULL,
+  `Expiration` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+INSERT INTO `Coupons` (`CouponID`, `RestaurantID`, `ItemID`, `Discount`, `Expiration`) VALUES
+(0, 0, 0, 50, '04/02/2024'),
+(1, 1, 18, 100, '05/01/2024'),
+(2, 11, 100, 100, '02/01/2024');
+
+--
+-- Table structure for table `Reviews`
+--
+DROP TABLE IF EXISTS `Reviews`;
+CREATE TABLE `Reviews` (
+  `ReviewID` bigint(20) UNSIGNED NOT NULL,
+  `RestaurantID` bigint(20) UNSIGNED NOT NULL,
+  `Name` varchar(255) NOT NULL,
+  `Rating` int(1) NOT NULL,
+  `Body` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `Reviews` (`ReviewID`, `RestaurantID`, `Name`, `Rating`, `Body`) VALUES
+(0, 0, 'Raymoo Hackery', 2, 'Had the Big Mac and it kinda sucked.'),
+(1, 4, 'Local Man', 3, 'They never get my order right but it\'s kinda good.'),
+(2, 6, 'Kenji', 5, 'Great burgers for cheap!');
+-- --------------------------------------------------------
+
+--
 -- Indexes for dumped tables
 --
 
@@ -293,6 +329,24 @@ ALTER TABLE `Restaurant`
   ADD PRIMARY KEY (`RestaurantID`);
 
 --
+-- Indexes for table `Restaurant`
+--
+ALTER TABLE `Coupons`
+  ADD PRIMARY KEY (`CouponID`),
+  ADD KEY `RestaurantID` (`RestaurantID`),
+  ADD KEY `ItemID` (`ItemID`);
+
+--
+-- Indexes for table `Reviews`
+--
+ALTER TABLE `Reviews`
+  ADD PRIMARY KEY (`ReviewID`),
+  ADD KEY `RestaurantID` (`RestaurantID`);
+
+
+
+  
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -313,6 +367,19 @@ ALTER TABLE `Orders`
 --
 ALTER TABLE `Restaurant`
   MODIFY `RestaurantID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `Coupons`
+--
+ALTER TABLE `Coupons`
+  MODIFY `CouponID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `Coupons`
+--
+ALTER TABLE `Reviews`
+  MODIFY `ReviewID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 
 --
 -- Constraints for dumped tables
@@ -336,4 +403,20 @@ ALTER TABLE `OrderItems`
 --
 ALTER TABLE `Orders`
   ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`CustomerID`) REFERENCES `Customers` (`CustomerID`);
+
+--
+-- Constraints for table `Coupons`
+--
+ALTER TABLE `Coupons`
+  ADD CONSTRAINT `coupons_ibfk_2` FOREIGN KEY (`RestaurantID`) REFERENCES `Restaurant` (`RestaurantID`),
+  ADD CONSTRAINT `coupons_ibfk_3` FOREIGN KEY (`ItemID`) REFERENCES `Items` (`ItemID`);
+
+
+--
+-- Constraints for table `Items`
+--
+ALTER TABLE `Reviews`
+  ADD CONSTRAINT `items_ibfk_2` FOREIGN KEY (`RestaurantID`) REFERENCES `Restaurant` (`RestaurantID`);
+
+
 COMMIT;
