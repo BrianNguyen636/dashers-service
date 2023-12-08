@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+/* .App {
+=======
 body {
   background-color: #202122; 
 }
@@ -15,6 +18,7 @@ body {
 
 
 .App {
+>>>>>>> brian
   text-align: center;
 }
 
@@ -42,13 +46,59 @@ body {
 
 .App-link {
   color: #61dafb;
+} */
+
+/* RegistrationPage.css */
+
+.registration-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Set a specific height for the container */
+  margin: auto; /* Center both horizontally and vertically */
 }
 
-@keyframes App-logo-spin {
+.forms-container {
+  display: flex;
+  align-items: center;
+}
+
+form {
+  width: 300px; /* Set a fixed width for the forms */
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+label {
+  margin-bottom: 8px;
+}
+
+input {
+  margin-bottom: 16px;
+  padding: 8px;
+  width: 80%;
+}
+button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+/* @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
   }
-}
+} */

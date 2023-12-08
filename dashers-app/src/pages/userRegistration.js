@@ -1,35 +1,8 @@
-<<<<<<< HEAD
-// import logo from './logo.svg';
-// import './App.css';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
-// export default App;
-
 // RegistrationPage.js
 import React, { useState } from 'react';
-import './App.css';
+import './userRegistration.css';
 
-const App = () => {
+const userRegistration = () => {
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [loginEmail, setLoginEmail] = useState('');
@@ -39,7 +12,7 @@ const App = () => {
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [signupError, setSignupError] = useState('');
   const [loginError, setLoginError] = useState('');
-  
+
 
   const handleSignUp = () => {
     if (!signupEmail || !signupEmail.includes('@') || !signupEmail.includes('.com') || !signupPassword) {
@@ -138,27 +111,4 @@ const App = () => {
   );
 };
 
-export default App;
-=======
-import { BrowserRouter, Routes, Route } from "react-router-dom"; 
-import RestaurantPage from "./pages/RestaurantPage";
-import OrderSum from './pages/OrderSum';
-import RestaurantDetail from "./pages/RestaurantDetail";
-
-
-function App() { 
-return ( 
-<div className="app"> 
-<BrowserRouter> 
-<Routes> 
-  <Route path="/res" element={<RestaurantPage />} />
-  <Route path="/restaurant/detail/:RestaurantID" element={<RestaurantDetail />} />
-  <Route path="/order" element={<OrderSum />} />
-</Routes> 
-<div id = "main"> </div>
-</BrowserRouter> 
-</div> 
-); 
-} 
-export default App;
->>>>>>> brian
+export default userRegistration;
