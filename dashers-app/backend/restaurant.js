@@ -261,7 +261,7 @@ app.post('/orders', (request, response) => {
         if (err) {
             return response.status(400).json({Error: "Failed: Record was not added."})
         }
-        return response.status(200).json({Success: "Successful: Record was added!"});
+        return response.status(200).json({"ID":result.insertId});
     });
 });
 //UPDATE RECORD BY CustomerID
