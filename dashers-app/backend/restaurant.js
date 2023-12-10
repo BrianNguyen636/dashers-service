@@ -229,7 +229,7 @@ app.get('/orders', (request, response) => {
 });
 // GET all Orders given CustomerID
 // Retrieve the ID result with result[0].OrderID
-app.get('/customer/orders/:ID', (request, response) => {
+app.get('/customer/:ID/orders', (request, response) => {
     const ID = request.params.ID;
     const query = request.query.OrderStatus;
     sqlQuery = "SELECT * FROM orders WHERE CustomerID = '" + ID + "' ";
@@ -244,6 +244,7 @@ app.get('/customer/orders/:ID', (request, response) => {
         return response.status(200).json(result);
     });
 });
+
 
 // GET Order given ID
 app.get('/orders/:ID', (request, response) => {
@@ -269,7 +270,7 @@ app.post('/orders', (request, response) => {
         return response.status(200).json({"ID":result.insertId});
     });
 });
-//UPDATE RECORD BY CustomerID
+//UPDATE RECORD BY OrderID
 app.put('/orders/:ID', (request, response) => {
     const ID = request.params.ID;
     const sqlQuery = 'UPDATE Orders SET OrderID = ?, CustomerID = ?, DeliveryAddress = ?, PaymentStatus = ?, OrderStatus = ? WHERE OrderID = ? ;';
@@ -339,6 +340,42 @@ app.delete('/orders/:ID/items/:ItemID', (request, response) => {
     const ItemID = request.params.ItemID;
     const sqlQuery = "DELETE FROM orderitems WHERE OrderID = ? AND ItemID = ? ; ";
     dbConnection.query(sqlQuery, [ID, ItemID], (err, result) => {
+    if (err) {
+        return response.status(400).json({ Error: "Failed: Record was not deleted" });
+    }
+        return response.status(200).json({ Success: "Succcessful: Record was deleted!" });
+    });
+});
+// ------------------------------------------------------------------
+// FAVORITED ORDERS
+
+// GET all Favorited Orders given CustomerID
+app.get('/customer/:ID/orders/favorites', (request, response) => {
+    const ID = request.params.ID;
+    sqlQuery = "SELECT * FROM favorders WHERE CustomerID = '" + ID + "'; ";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        return response.status(200).json(result);
+    });
+});
+//INSERT FavOrder by CustomerID and OrderID
+app.post('/customer/:ID/orders/favorites/:OrderID', (request, response) => {
+    const values = [request.params.ID,request.params.OrderID]
+    const sqlQuery = 'INSERT INTO favorders VALUES (?);';
+    dbConnection.query(sqlQuery,[values], (err, result) => {
+        if (err) {
+            return response.status(400).json({Error: "Failed: Record was not added."})
+        }
+        return response.status(200).json({Success:"Record was added!"});
+    });
+});
+//DELETE RECORD BY CustomerID and OrderID
+app.delete('/customer/:ID/orders/favorites/:OrderID', (request, response) => {
+    const values = [request.params.ID,request.params.OrderID]
+    const sqlQuery = "DELETE FROM favorders WHERE CustomerID = ? AND OrderID = ? ; ";
+    dbConnection.query(sqlQuery, values, (err, result) => {
     if (err) {
         return response.status(400).json({ Error: "Failed: Record was not deleted" });
     }
