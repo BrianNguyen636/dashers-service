@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './restaurantPage.css';
-import { Navbar, Nav, Card, Button, CardDeck, Row, Col } from 'react-bootstrap';
+import { Navbar, Nav, Card, Button, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ const RestaurantDetail = () => {
             try {
                 const restaurantResponse = await axios.get(`http://localhost:4000/restaurant/${RestaurantID}`);
                 setRestaurant(restaurantResponse.data);
-                const menuResponse = await axios.get(`http://localhost:4000/restaurant/Menu/${RestaurantID}`);
+                const menuResponse = await axios.get(`http://localhost:4000/restaurant/${RestaurantID}/items`);
                 setMenu(menuResponse.data);
                 const reviewsResponse = await axios.get(`http://localhost:4000/review/restaurant/${RestaurantID}`);
                 setReviews(reviewsResponse.data);
@@ -29,10 +29,34 @@ const RestaurantDetail = () => {
     }, []);
 
     // Function to handle adding an item to the cart
-    const handleAddToCart = (menuItem) => {
-        // Your logic to add the item to the cart goes here
+    const AddToCart = async (menuItem) => {
         try {
-            const response = "";
+            // check if order exists ??
+        //response.getResponseHeader("OrderID")
+        // replace 0 with customerID
+            // const orderExists = await axios.get('http://localhost:4000/customer/orders/0', {
+            //     params: {
+            //         OrderStatus: "sda",
+            //     },
+            // });
+            // console.log(orderExists.getr);
+            // creates new order
+            const body = {
+                CustomerID: 0,
+                DeliveryAddress: "saddsa",
+                PaymentStatus: "sida",
+                OrderStatus: "In-Progress",
+            };
+            const orderResponse = await axios.post(`http://localhost:4000/orders`, body);
+            const order = orderResponse.data;
+            console.log(menuItem.ItemID);
+            const orderItems = {
+                OrderID: order.ID,
+                ItemID: menuItem.ItemID,
+                Quantity: 1,
+            };
+            // add order items to order
+            const itemResponse = await axios.post(`http://localhost:4000/orders/${order.ID}/items`, orderItems)
         } catch(error) {
             console.error('Error adding to cart', error);
         }
@@ -75,7 +99,7 @@ const RestaurantDetail = () => {
                                                         <p>Price: ${menuItem.Price}</p>
                                                         <p>Calories: {menuItem.Calories}</p>
                                                     </div>
-                                                    <Button variant="primary" onClick={() => handleAddToCart(menuItem)}>
+                                                    <Button variant="primary" onClick={() => AddToCart(menuItem)}>
                                                         Add to Cart
                                                     </Button>
                                                 </Card.Body>

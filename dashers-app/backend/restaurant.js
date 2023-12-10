@@ -60,17 +60,6 @@ app.get('/restaurant/:RestaurantID', (request, response) => {
         return response.status(200).json(result);
     });
 });
-app.get('/restaurant/Menu/:ID', (request, response) => {
-    const ID = request.params.ID;
-    const sqlQuery = "SELECT Category, Name, Price, Calories FROM Items WHERE RestaurantID = '" + ID + "' ;";
-    dbConnection.query(sqlQuery, (err, result) => {
-        if (err) {
-            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
-        }
-        response.setHeader('ID', ID); // send a custom header attribute 
-        return response.status(200).json(result);
-    });
-});
 // ----------------------------------------
 // ITEMS
 
