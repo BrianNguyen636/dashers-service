@@ -228,17 +228,23 @@ app.get('/orders', (request, response) => {
     });
 });
 // GET all Orders given CustomerID
-app.get('customer/orders/:ID', (request, response) => {
+// Retrieve the ID result with result[0].OrderID
+app.get('/customer/orders/:ID', (request, response) => {
     const ID = request.params.ID;
-    const sqlQuery = "SELECT * FROM orders WHERE CustomerID = '" + ID + "' ;";
-    dbConnection.query(sqlQuery, (err, result) => {
+    const query = request.query.OrderStatus;
+    sqlQuery = "SELECT * FROM orders WHERE CustomerID = '" + ID + "' ";
+    if (query != null) {
+        sqlQuery += " AND OrderStatus = " + query
+    }
+    dbConnection.query(sqlQuery+";", (err, result) => {
         if (err) {
             return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
         }
-        response.setHeader('ID', ID); // send a custom header attribute 
+        if (result.length > 0) response.setHeader('OrderID', result[0].OrderID);
         return response.status(200).json(result);
     });
 });
+
 // GET Order given ID
 app.get('/orders/:ID', (request, response) => {
     const ID = request.params.ID;
@@ -247,7 +253,6 @@ app.get('/orders/:ID', (request, response) => {
         if (err) {
             return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
         }
-        response.setHeader('ID', ID); // send a custom header attribute 
         return response.status(200).json(result);
     });
 });
@@ -260,6 +265,7 @@ app.post('/orders', (request, response) => {
         if (err) {
             return response.status(400).json({Error: "Failed: Record was not added."})
         }
+        response.setHeader('Success', 'Record was added!'); // send a custom header attribute 
         return response.status(200).json({"ID":result.insertId});
     });
 });
