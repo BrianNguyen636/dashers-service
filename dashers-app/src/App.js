@@ -9,6 +9,7 @@ return (
 <div className="app"> 
 <BrowserRouter> 
 <Routes> 
+  <Route path="/home" element={<RestaurantPage />} />
   <Route path="/res" element={<RestaurantPage />} />
   <Route path="/restaurant/detail/:RestaurantID" element={<RestaurantDetail />} />
   <Route path="/order" element={<OrderSum />} />

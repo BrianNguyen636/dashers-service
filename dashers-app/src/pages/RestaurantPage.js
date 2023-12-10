@@ -40,18 +40,16 @@ const handleCardLeave = () => {
   const [navbarOpen, setNavbarOpen] = useState(false);
   return (
     <div>
-      {/* Navbar */}
-      <Navbar bg="dark" variant="dark">
-        <Navbar.Brand href="/order">
-          <Button variant="secondary" className="menu-btn">...</Button> Dashers
-        </Navbar.Brand>
-        <Nav className="mr-auto">
-          <Nav.Link href="/order">Order</Nav.Link>
-          <Nav.Link href="/res">Restaurant</Nav.Link>
-        </Nav>
-      </Navbar>
+      <Navbar bg="dark" variant="dark" className="navbar bg-dark">
+                <Navbar.Brand href="/home">
+                    <Button variant="secondary" className="menu-btn">Dashers</Button> 
+                </Navbar.Brand>
+                <Nav className="mr-auto">
+                    <Nav.Link href="/order">Order</Nav.Link>
+                    <Nav.Link href="/res">Restaurant</Nav.Link>
+                </Nav>
+            </Navbar>
 
-      {/* Main Content */}
       <div className="container mt-5">
         <h1 className="text-center mb-4">Explore Restaurants</h1>
         <div>
