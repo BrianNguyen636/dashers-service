@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './restaurantPage.css';
-import { Navbar, Nav, Card, Button } from 'react-bootstrap';
+import { Navbar, Nav, Card, Button, CardDeck, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 
 const RestaurantDetail = () => {
     const { RestaurantID } = useParams();
     const [restaurant, setRestaurant] = useState({});
+    const [menu, setMenu] = useState({});
+    const [reviews, setReviews] = useState([]);
+
     useEffect(() => {
         const getRestaurant = async () => {
             try {
-                const response = await axios.get(`http://localhost:4000/restaurant/Menu/${RestaurantID}`);
-                setRestaurant(response.data);
+                const restaurantResponse = await axios.get(`http://localhost:4000/restaurant/${RestaurantID}`);
+                setRestaurant(restaurantResponse.data);
+                const menuResponse = await axios.get(`http://localhost:4000/restaurant/Menu/${RestaurantID}`);
+                setMenu(menuResponse.data);
+                const reviewsResponse = await axios.get(`http://localhost:4000/review/restaurant/${RestaurantID}`);
+                setReviews(reviewsResponse.data);
             } catch (error) {
                 console.error('Error fetching restaurant data:', error);
             }
@@ -21,14 +27,23 @@ const RestaurantDetail = () => {
 
         getRestaurant();
     }, []);
-    // Navbar state
-    const [navbarOpen, setNavbarOpen] = useState(false);
+
+    // Function to handle adding an item to the cart
+    const handleAddToCart = (menuItem) => {
+        // Your logic to add the item to the cart goes here
+        try {
+            const response = "";
+        } catch(error) {
+            console.error('Error adding to cart', error);
+        }
+        console.log(`Added ${menuItem.Name} to the cart`);
+    };
+
     return (
         <div>
-            {/* Navbar */}
-            <Navbar bg="dark" variant="dark" class="navbar bg-dark">
-                <Navbar.Brand href="/order">
-                    <Button variant="secondary" className="menu-btn">...</Button> Dashers
+            <Navbar bg="dark" variant="dark" className="navbar bg-dark">
+                <Navbar.Brand href="/home">
+                    <Button variant="secondary" className="menu-btn">Dashers</Button> 
                 </Navbar.Brand>
                 <Nav className="mr-auto">
                     <Nav.Link href="/order">Order</Nav.Link>
@@ -40,7 +55,6 @@ const RestaurantDetail = () => {
                 {Object.keys(restaurant).length > 0 ? (
                     <div>
                         <div className="image-container">
-                            <p>rest</p>
                             <img src={restaurant[0].Image} alt={restaurant[0].Name} className="image" />
                         </div>
                         <h1 id="Title" className="text-left mt-3">{restaurant[0].Name}</h1>
@@ -48,27 +62,53 @@ const RestaurantDetail = () => {
                             <p>Rating: {restaurant[0].Rating}</p>
                             <p>Popular Item: {restaurant[0].Popular_Item}</p>
                         </h4>
-                        {// NEEDS TO BE DONE
-                        }
-                        {/* <div className="menu-items mt-4">
-                            {restaurant.Menu && restaurant.Menu.length > 0 ? (
-                                <div>
-                                    {restaurant.Menu.map((menuItem, index) => (
-                                        <Card key={index} className="mb-3">
-                                            <Card.Body>
-                                                <Card.Title>{menuItem.Name}</Card.Title>
-                                                <Card.Text>
-                                                    <p>{menuItem.Description}</p>
-                                                    <p>Price: ${menuItem.Price}</p>
-                                                </Card.Text>
-                                            </Card.Body>
-                                        </Card>
+                        <div className="menu-items mt-4">
+                            {menu && menu.length > 0 ? (
+                                <Row xs={1} md={3} className="g-4">
+                                    {menu.map((menuItem, index) => (
+                                        <Col key={index}>
+                                            <Card className="mb-3">
+                                                <Card.Body>
+                                                    <Card.Title>{menuItem.Name}</Card.Title>
+                                                    <div>
+                                                        <p>{menuItem.Category}</p>
+                                                        <p>Price: ${menuItem.Price}</p>
+                                                        <p>Calories: {menuItem.Calories}</p>
+                                                    </div>
+                                                    <Button variant="primary" onClick={() => handleAddToCart(menuItem)}>
+                                                        Add to Cart
+                                                    </Button>
+                                                </Card.Body>
+                                            </Card>
+                                        </Col>
                                     ))}
-                                </div>
+                                </Row>
                             ) : (
                                 <p>No menu items available.</p>
                             )}
-                        </div> */}
+                        </div>
+
+                        <div className="customer-reviews mt-4">
+                            <h2>Customer Reviews</h2>
+                            {reviews.length > 0 ? (
+                                <Row xs={1} md={3} className="g-4">
+                                    {reviews.map((review, index) => (
+                                        <Col key={index}>
+                                            <Card>
+                                                <Card.Body>
+                                                    <Card.Title>{review.Name}:</Card.Title>
+                                                        <div>{review.Rating}/10</div>
+                                                        <br></br>
+                                                        <div><p id="reviewText">Customer states:</p> {review.Body}</div>
+                                                </Card.Body>
+                                            </Card>
+                                        </Col>
+                                    ))}
+                                </Row>
+                            ) : (
+                                <p>No reviews yet.</p>
+                            )}
+                        </div>
                     </div>
                 ) : (
                     <p>Loading...</p>

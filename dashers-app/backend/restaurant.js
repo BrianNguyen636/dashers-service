@@ -51,7 +51,6 @@ app.get('/restaurant', (request, response) => {
 });
 app.get('/restaurant/:RestaurantID', (request, response) => {
     const ID = request.params.RestaurantID;
-    console.log(ID);
     const sqlQuery = "SELECT Name, Rating, Popular_Item, Image FROM Restaurant WHERE RestaurantID = '" + ID + "' ;";
     dbConnection.query(sqlQuery, (err, result) => {
         if (err) {
@@ -63,7 +62,7 @@ app.get('/restaurant/:RestaurantID', (request, response) => {
 });
 app.get('/restaurant/Menu/:ID', (request, response) => {
     const ID = request.params.ID;
-    const sqlQuery = "SELECT Name FROM ITEMS WHERE RestaurantID = '" + ID + "' ;";
+    const sqlQuery = "SELECT Category, Name, Price, Calories FROM Items WHERE RestaurantID = '" + ID + "' ;";
     dbConnection.query(sqlQuery, (err, result) => {
         if (err) {
             return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
