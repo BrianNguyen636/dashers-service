@@ -34,12 +34,12 @@ const RestaurantDetail = () => {
             // check if order exists ??
         //response.getResponseHeader("OrderID")
         // replace 0 with customerID
-            const orderExists = await axios.get('http://localhost:4000/customer/orders/0', {
-                params: {
-                    OrderStatus: "sda",
-                },
-            });
-            console.log(orderExists.getResponseHeader("OrderID"));
+            // const orderExists = await axios.get('http://localhost:4000/customer/orders/0', {
+            //     params: {
+            //         OrderStatus: "sda",
+            //     },
+            // });
+            // console.log(orderExists.getr);
             // creates new order
             const body = {
                 CustomerID: 0,
@@ -47,7 +47,7 @@ const RestaurantDetail = () => {
                 PaymentStatus: "sida",
                 OrderStatus: "In-Progress",
             };
-            const orderResponse = await axios.get(`http://localhost:4000/orders`, body);
+            const orderResponse = await axios.post(`http://localhost:4000/orders`, body);
             const order = orderResponse.data;
             console.log(menuItem.ItemID);
             const orderItems = {
