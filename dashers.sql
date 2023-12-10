@@ -32,7 +32,7 @@ USE dashers;
 --
 DROP TABLE IF EXISTS `Customers`;
 CREATE TABLE `Customers` (
-  `CustomerID` varchar(255) NOT NULL,
+  `CustomerID` BIGINT(20) UNSIGNED NOT NULL,
   `Name` varchar(255) DEFAULT NULL,
   `PrimaryAddress` varchar(255) DEFAULT NULL,
   `SecondaryAddress` varchar(255) DEFAULT NULL,
@@ -215,7 +215,7 @@ CREATE TABLE `OrderItems` (
 DROP TABLE IF EXISTS `Orders`;
 CREATE TABLE `Orders` (
   `OrderID` bigint(20) UNSIGNED NOT NULL,
-  `CustomerID` varchar(255) DEFAULT NULL,
+  `CustomerID` bigint(20) UNSIGNED NOT NULL,
   `DeliveryAddress` varchar(255) DEFAULT NULL,
   `PaymentStatus` varchar(255) DEFAULT NULL,
   `OrderStatus` varchar(255) DEFAULT NULL
@@ -402,7 +402,7 @@ ALTER TABLE `OrderItems`
 -- Constraints for table `Orders`
 --
 ALTER TABLE `Orders`
-  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`CustomerID`) REFERENCES `Customers` (`CustomerID`);
+  ADD CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`CustomerID`) REFERENCES `Customers` (`CustomerID`);
 
 --
 -- Constraints for table `Coupons`
