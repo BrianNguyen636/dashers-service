@@ -2,9 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import RestaurantPage from "./pages/RestaurantPage";
 import OrderSum from './pages/OrderSum';
 import RestaurantDetail from "./pages/RestaurantDetail";
-import MapPage from './pages/mapPage';
-import UserRegistration from "./pages/UserRegistration";
-
+import MapPage from "./pages/mapPage";
+import RegistrationPage from "./pages/RegistrationPage";
 
 function App() { 
 return ( 
@@ -15,7 +14,7 @@ return (
   {/* Temporary, need to replace /home link to point towards actual home page, 
       probs just point to user registration page like we discussed */}
   <Route path="/home" element={<RestaurantPage />} />
-  <Route path="/user" element={<UserRegistration />} />
+  <Route path="/user" element={<RegistrationPage />} />
   <Route path="/res" element={<RestaurantPage />} />
   <Route path="/restaurant/detail/:RestaurantID" element={<RestaurantDetail />} />
   <Route path="/order" element={<OrderSum />} />
