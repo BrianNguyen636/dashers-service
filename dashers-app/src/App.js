@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import RestaurantPage from "./pages/RestaurantPage";
 import OrderSum from './pages/OrderSum';
 import RestaurantDetail from "./pages/RestaurantDetail";
+import MapPage from "./pages/mapPage";
 
 
 function App() { 
