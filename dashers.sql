@@ -241,26 +241,28 @@ CREATE TABLE `Restaurant` (
   `Popular_Item` varchar(255) NOT NULL,
   `Rating` int(10) NOT NULL,
   `Image` varchar(255) NOT NULL,
-  `RestaurantID` int(10) NOT NULL
+  `RestaurantID` int(10) NOT NULL,
+  `lat` float(20),
+  `lng` float(20)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `Restaurant`
 --
 
-INSERT INTO `Restaurant` (`Name`, `Popular_Item`, `Rating`, `Image`, `RestaurantID`) VALUES
-('Burger King', 'Whopper', 4, '/images/burgerking.png', 5),
-('Chickfila', 'Chicken Sandwich', 10, '/images/chickfila.jpeg', 1),
-('Denny\'s', 'Omelette', 2, '/images/denny.png', 10),
-('Dicks Drive-In', 'Deluxe Cheeseburger', 9, '/images/dicks.png', 6),
-('IHOP', 'Pancakes', 5, '/images/ihop.png', 7),
-('Jack in the Box', 'Curly Fries', 6, '/images/jackinbox.svg', 12),
-('McDonald\'s', 'Big Mac', 6, '/images/mcdonald.png', 0),
-('Panda Express', 'Chow Mein', 7, '/images/panda.png', 3),
-('Popeyes', 'Chicken Sandwich', 5, '/images/popeyes.png', 4),
-('Red Robin', 'Salad', 6, '/images/redrobin.jpeg', 8),
-('Taco Bell', 'Taco', 10, '/images/tacobell.png', 11),
-('Wendy\'s', 'Four for Four combo', 6, '/images/Wendys.png', 2);
+INSERT INTO `Restaurant` (`Name`, `Popular_Item`, `Rating`, `Image`, `RestaurantID`, `lat`, `lng`) VALUES
+('Burger King', 'Whopper', 4, '/images/burgerking.png', 5, 47.222930, -122.474800),
+('Chickfila', 'Chicken Sandwich', 10, '/images/chickfila.jpeg', 1, 47.221581, -122.468948),
+('Denny''s', 'Omelette', 2, '/images/denny.png', 10, 47.178760, -122.464120 ),
+('Dicks Drive-In', 'Deluxe Cheeseburger', 9, '/images/dicks.png', 6,47.384338,-122.296379 ),
+('IHOP', 'Pancakes', 5, '/images/ihop.png', 7, 47.188690, -122.461310),
+('Jack in the Box', 'Curly Fries', 6, '/images/jackinbox.svg', 12, 47.206680, -122.433580),
+('McDonald''s', 'Big Mac', 6, '/images/mcdonald.png', 0,47.255750, -122.445180 ),
+('Panda Express', 'Chow Mein', 7, '/images/panda.png', 3,47.255840, -122.518880),
+('Popeyes', 'Chicken Sandwich', 5, '/images/popeyes.png', 4,47.255170, -122.522940 ),
+('Red Robin', 'Salad', 6, '/images/redrobin.jpeg', 8,47.221590, -122.467880 ),
+('Taco Bell', 'Taco', 10, '/images/tacobell.png', 11,47.2228046, -122.475523 ),
+('Wendy''s', 'Four for Four combo', 6, '/images/Wendys.png', 2, 47.2198566,-122.4680574);
 
 -- --------------------------------------------------------
 
