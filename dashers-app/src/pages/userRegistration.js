@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import './userRegistration.css';
 
-const userRegistration = () => {
+const UserRegistration = () => {
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [loginEmail, setLoginEmail] = useState('');
@@ -111,4 +111,4 @@ const userRegistration = () => {
   );
 };
 
-export default userRegistration;
+export default UserRegistration;
