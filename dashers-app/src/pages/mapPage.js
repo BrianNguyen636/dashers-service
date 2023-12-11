@@ -12,6 +12,7 @@ const RestaurantCard = ({ name, rating, popularItem }) => (
       <Card.Title>{name}</Card.Title>
       <Card.Subtitle className="mb-2 text-muted">Rating: {rating}</Card.Subtitle>
       <Card.Text>Popular Item: {popularItem}</Card.Text>
+      {/* Add more details or buttons as needed */}
     </Card.Body>
   </Card>
 );
@@ -25,9 +26,11 @@ export default function SimpleMap() {
     zoom: 11
   };
 
+  // Mock restaurant data (replace with your database data)
   const restaurants = [
     { id: 1, name: 'Restaurant 1', rating: 4.5, popularItem: 'Pizza' },
     { id: 2, name: 'Restaurant 2', rating: 3.8, popularItem: 'Burger' },
+    // Add more restaurant data as needed
   ];
 
   return (
