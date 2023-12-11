@@ -436,6 +436,69 @@ app.delete('/customer/:ID/orders/favorites/:OrderID', (request, response) => {
         return response.status(200).json({ Success: "Succcessful: Record was deleted!" });
     });
 });
+// -----------------------------------------------------
+// PaymentInfo
+
+// GET all payment given a customer ID.
+app.get('/customer/:ID/payment', (request, response) => {
+    const ID = request.params.ID;
+    sqlQuery = "SELECT * FROM paymentinfo WHERE CustomerID = '" + ID + "'; ";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        return response.status(200).json(result);
+    });
+});
+// GET a payment given a paymentID.
+app.get('/payment/:ID', (request, response) => {
+    const ID = request.params.ID;
+    sqlQuery = "SELECT * FROM paymentinfo WHERE PaymentID = '" + ID + "'; ";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
+        }
+        return response.status(200).json(result);
+    });
+});
+//INSERT Payment
+app.post('/payment', (request, response) => {
+    const values = [request.body.PaymentID, request.body.CustomerID, request.body.PaymentType, request.body.CardNumber,
+        request.body.CardExpiration, request.body.CardSecurity];
+    const sqlQuery = 'INSERT INTO PaymentInfo VALUES (?);';
+    dbConnection.query(sqlQuery,[values], (err, result) => {
+        if (err) {
+            return response.status(400).json({Error: "Failed: Record was not added."})
+        }
+        response.setHeader("ID", result.insertId)
+        return response.status(200).json({Success:"Record was added!"});
+    });
+});
+//UPDATE RECORD BY PaymentID
+app.put('/payment/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = 'UPDATE PaymentInfo SET PaymentType = ?, CardNumber = ?, CardExpiration = ?, CardSecurity = ? WHERE PaymentID = ? ;';
+    const values = [request.body.PaymentType, request.body.CardNumber, request.body.CardExpiration, 
+        request.body.CardSecurity];
+    dbConnection.query(sqlQuery, [...values, ID], (err, result) => {
+        if (err) {
+            return response.status(400).json({Error: "Failed: Record was not updated."})
+        }
+        return response.status(200).json({Success: "Successful: Record was updated!"});
+    });
+});
+//DELETE RECORD BY paymentID
+app.delete('/payment/:ID', (request, response) => {
+    const ID = request.params.ID
+    const sqlQuery = "DELETE FROM paymentinfo WHERE PaymentID = '" + ID + "' ; ";
+    dbConnection.query(sqlQuery, (err, result) => {
+    if (err) {
+        return response.status(400).json({ Error: "Failed: Record was not deleted" });
+    }
+        return response.status(200).json({ Success: "Succcessful: Record was deleted!" });
+    });
+});
+
 // ----------------------------------------------
 // Ref: https://expressjs.com/en/4x/api.html#app
 // (C)  Create a server such that it binds and
