@@ -32,7 +32,7 @@ USE dashers;
 --
 DROP TABLE IF EXISTS `Customers`;
 CREATE TABLE `Customers` (
-  `CustomerID` varchar(255) NOT NULL,
+  `CustomerID` BIGINT(20) UNSIGNED NOT NULL,
   `Name` varchar(255) DEFAULT NULL,
   `PrimaryAddress` varchar(255) DEFAULT NULL,
   `SecondaryAddress` varchar(255) DEFAULT NULL,
@@ -215,10 +215,19 @@ CREATE TABLE `OrderItems` (
 DROP TABLE IF EXISTS `Orders`;
 CREATE TABLE `Orders` (
   `OrderID` bigint(20) UNSIGNED NOT NULL,
-  `CustomerID` varchar(255) DEFAULT NULL,
+  `CustomerID` bigint(20) UNSIGNED NOT NULL,
   `DeliveryAddress` varchar(255) DEFAULT NULL,
   `PaymentStatus` varchar(255) DEFAULT NULL,
   `OrderStatus` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Table structure for table `FavOrders`
+--
+DROP TABLE IF EXISTS `FavOrders`;
+CREATE TABLE `FavOrders` (
+  `CustomerID` bigint(20) UNSIGNED NOT NULL,
+  `OrderID` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -289,6 +298,9 @@ INSERT INTO `Reviews` (`ReviewID`, `RestaurantID`, `Name`, `Rating`, `Body`) VAL
 (0, 0, 'Raymoo Hackery', 2, 'Had the Big Mac and it kinda sucked.'),
 (1, 4, 'Local Man', 3, 'They never get my order right but it\'s kinda good.'),
 (2, 6, 'Kenji', 5, 'Great burgers for cheap!');
+
+
+
 -- --------------------------------------------------------
 
 --
@@ -323,6 +335,13 @@ ALTER TABLE `Orders`
   ADD KEY `CustomerID` (`CustomerID`);
 
 --
+-- Indexes for table `FavOrders`
+--
+ALTER TABLE `FavOrders`
+  ADD KEY `OrderID` (`OrderID`),
+  ADD KEY `CustomerID` (`CustomerID`);
+
+--
 -- Indexes for table `Restaurant`
 --
 ALTER TABLE `Restaurant`
@@ -350,6 +369,11 @@ ALTER TABLE `Reviews`
 -- AUTO_INCREMENT for dumped tables
 --
 
+--
+-- AUTO_INCREMENT for table `Customers`
+--
+ALTER TABLE `Customers`
+  MODIFY `CustomerID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `Items`
 --
@@ -402,7 +426,15 @@ ALTER TABLE `OrderItems`
 -- Constraints for table `Orders`
 --
 ALTER TABLE `Orders`
-  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`CustomerID`) REFERENCES `Customers` (`CustomerID`);
+  ADD CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`CustomerID`) REFERENCES `Customers` (`CustomerID`);
+
+
+--
+-- Constraints for table `FavOrders`
+--
+ALTER TABLE `FavOrders`
+  ADD CONSTRAINT `favorders_ibfk_1` FOREIGN KEY (`CustomerID`) REFERENCES `Customers` (`CustomerID`),
+  ADD CONSTRAINT `favorders_ibfk_2` FOREIGN KEY (`OrderID`) REFERENCES `Orders` (`OrderID`);
 
 --
 -- Constraints for table `Coupons`
