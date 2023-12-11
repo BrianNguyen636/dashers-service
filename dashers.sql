@@ -42,7 +42,8 @@ CREATE TABLE `Customers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `Customers` (`CustomerID`, `Name`, `PrimaryAddress`, `SecondaryAddress`, `Email`, `Username`, `Password`) VALUES
-(0, 'John Doe', '1111 Bogus Street', '2222 Sham Ave', 'email@test.com', 'testuser', 'testpassword');
+(0, 'John Doe', '1111 Bogus Street', '2222 Sham Ave', 'email@test.com', 'testuser', 'testpassword'),
+(1, 'Ky Kiske', 'Ilyria Castle', NULL, 'thunder@test.com', 'kykiske', 'dizzysin');
 
 
 -- --------------------------------------------------------
@@ -207,6 +208,15 @@ CREATE TABLE `OrderItems` (
   `Quantity` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `OrderItems` VALUES 
+(0, 0, 1),
+(0, 3, 1),
+(1, 101, 2),
+(1, 106, 1),
+(2, 12, 1),
+(2, 18, 1);
+
+
 -- --------------------------------------------------------
 
 --
@@ -221,6 +231,12 @@ CREATE TABLE `Orders` (
   `OrderStatus` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `Orders` VALUES 
+(0, 0, (SELECT PrimaryAddress FROM Customers WHERE CustomerID = 0), "Credit-Card", "Completed"),
+(1, 0, (SELECT SecondaryAddress FROM Customers WHERE CustomerID = 0), "Credit-Card", "Completed"),
+(2, 1, (SELECT PrimaryAddress FROM Customers WHERE CustomerID = 1), "Credit-Card", "Completed");
+
+
 --
 -- Table structure for table `FavOrders`
 --
@@ -229,6 +245,10 @@ CREATE TABLE `FavOrders` (
   `CustomerID` bigint(20) UNSIGNED NOT NULL,
   `OrderID` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `FavOrders` VALUES 
+(0, 0),
+(1, 2);
 
 -- --------------------------------------------------------
 
@@ -299,8 +319,27 @@ INSERT INTO `Reviews` (`ReviewID`, `RestaurantID`, `Name`, `Rating`, `Body`) VAL
 (1, 4, 'Local Man', 3, 'They never get my order right but it\'s kinda good.'),
 (2, 6, 'Kenji', 5, 'Great burgers for cheap!');
 
+--
+-- Table structure for table `PaymentInfo`
+--
+DROP TABLE IF EXISTS `PaymentInfo`;
+CREATE TABLE `PaymentInfo` (
+  `PaymentID` bigint(20) UNSIGNED NOT NULL,
+  `CustomerID` bigint(20) UNSIGNED NOT NULL,
+  `PaymentType` varchar(255) NOT NULL,
+  `CardNumber` varchar(255),
+  `CardExpiration` varchar(255),
+  `CardSecurity` varchar(255)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
+ALTER TABLE `PaymentInfo`
+  ADD PRIMARY KEY (`PaymentID`),
+  ADD KEY (`CustomerID`),
+  MODIFY `PaymentID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  
+INSERT INTO `PaymentInfo` VALUES
+(0, 0, 'Credit-Card', '1234-4567-7890', '10/27', '123'),
+(1, 1, 'Credit-Card', '1234-4567-7890', '10/27', '123');
 -- --------------------------------------------------------
 
 --
@@ -449,6 +488,7 @@ ALTER TABLE `Coupons`
 --
 ALTER TABLE `Reviews`
   ADD CONSTRAINT `items_ibfk_2` FOREIGN KEY (`RestaurantID`) REFERENCES `Restaurant` (`RestaurantID`);
-
-
+  
+ALTER TABLE `PaymentInfo`
+  ADD CONSTRAINT `paymentinfo_ibfk_1` FOREIGN KEY (`CustomerID`) REFERENCES `Customers` (`CustomerID`);
 COMMIT;
