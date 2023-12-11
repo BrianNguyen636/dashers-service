@@ -17,6 +17,8 @@ return (
   <Route path="/res" element={<RestaurantPage />} />
   <Route path="/restaurant/detail/:RestaurantID" element={<RestaurantDetail />} />
   <Route path="/order" element={<OrderSum />} />
+  <Route path="/map" element={<MapPage />} />
+
 </Routes> 
 <div id = "main"> </div>
 </BrowserRouter> 
