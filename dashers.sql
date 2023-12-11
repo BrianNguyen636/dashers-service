@@ -370,6 +370,11 @@ ALTER TABLE `Reviews`
 --
 
 --
+-- AUTO_INCREMENT for table `Customers`
+--
+ALTER TABLE `Customers`
+  MODIFY `CustomerID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `Items`
 --
 ALTER TABLE `Items`

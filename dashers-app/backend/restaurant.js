@@ -128,6 +128,46 @@ app.get('/customer/:ID', (request, response) => {
         return response.status(200).json(result);
     });
 });
+// POST Customer
+app.post('/customer', (request, response) => {
+    const sqlQuery = 'INSERT INTO customers VALUES (?) ;';
+    const values = [request.body.CustomerID, request.body.Name, request.body.PrimaryAddress, 
+        request.body.SecondaryAddress, request.body.Email, request.body.Username, request.body.Password];
+    dbConnection.query(sqlQuery, [values], (err, result) => {
+        if (err) {
+            console.log(err);
+            return response.status(400).json({Error: "Failed: Record was not added."})
+        }
+        
+        response.setHeader('Success', 'Record was added!'); // send a custom header attribute 
+        return response.status(200).json({"ID":result.insertId});
+    });
+});
+// PUT update Customer
+app.put('/customer/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = 'UPDATE customers SET Name = ?, PrimaryAddress = ?, SecondaryAddress = ?, Email = ?, Username = ?, Password = ? WHERE CustomerID = ?; ';
+    const values = [request.body.Name, request.body.PrimaryAddress, 
+        request.body.SecondaryAddress, request.body.Email, request.body.Username, request.body.Password];
+    dbConnection.query(sqlQuery, [...values, ID], (err, result) => {
+        if (err) {
+            console.log(err);
+            return response.status(400).json({Error: "Failed: Record was not Updated."})
+        }
+        return response.status(200).json({'Success': 'Record was Updated!'});
+    });
+});
+// DELETE Customer by ID
+app.delete('/customer/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "DELETE FROM customers WHERE CustomerID = '" + ID + "' ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Failed: Record was not deleted" });
+        }
+            return response.status(200).json({ Success: "Succcessful: Record was deleted!" });
+    });
+});
 // ----------------------------------------------------------------
 // COUPONS
 
@@ -202,6 +242,30 @@ app.get('/review/restaurant/:ID', (request, response) => {
         return response.status(200).json(result);
     });
 });
+// POST Review
+app.post('/review/restaurant/', (request, response) => {
+    const sqlQuery = 'INSERT INTO reviews VALUES (?);';
+    const values = [request.body.ReviewID, request.body.RestaurantID, request.body.Name, 
+        request.body.Rating, request.body.Body];
+    dbConnection.query(sqlQuery, [values], (err, result) => {
+        if (err) {
+            return response.status(400).json({Error: "Failed: Record was not added."})
+        }
+        response.setHeader('Success', 'Record was added!'); // send a custom header attribute 
+        return response.status(200).json({"ID":result.insertId});
+    });
+});
+// DELETE Review by ID
+app.delete('/review/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = "DELETE FROM reviews WHERE ReviewID = '" + ID + "' ;";
+    dbConnection.query(sqlQuery, (err, result) => {
+        if (err) {
+            return response.status(400).json({ Error: "Failed: Record was not deleted" });
+        }
+            return response.status(200).json({ Success: "Succcessful: Record was deleted!" });
+    });
+});
 
 // ----------------------------------------------------------------
 // Orders
@@ -217,6 +281,7 @@ app.get('/orders', (request, response) => {
     });
 });
 // GET all Orders given CustomerID
+//PARAM to get given OrderStatus
 // Retrieve the ID result with result[0].OrderID
 app.get('/customer/:ID/orders', (request, response) => {
     const ID = request.params.ID;
@@ -235,7 +300,7 @@ app.get('/customer/:ID/orders', (request, response) => {
 });
 
 
-// GET Order given ID
+// GET Order given OrderID
 app.get('/orders/:ID', (request, response) => {
     const ID = request.params.ID;
     const sqlQuery = "SELECT * FROM orders WHERE OrderID = '" + ID + "' ;";
