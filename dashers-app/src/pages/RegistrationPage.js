@@ -1,11 +1,13 @@
 //RegistrationPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './registrationPage.css';
 
 const RegistrationPage = () => {
+  const [signupCustomerID, setSignupCustomerID] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
+  const [signupUsername, setSignupUsername] = useState('');
   const [loginUsername, setLoginUsername] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
@@ -15,7 +17,37 @@ const RegistrationPage = () => {
   const [loginError, setLoginError] = useState('');
   const [signupName, setSignupName] = useState('');
   const [signupPrimaryAddress, setSignupPrimaryAddress] = useState('');
+  const [signupSecondaryAddress, setSignupSecondaryAddress] = useState('');
   const navigate = useNavigate();
+
+  // // Add a useEffect hook to fetch customer data on component mount
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch('http://localhost:4000/customer/:ID', {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //       });
+
+  //       const data = await response.json();
+
+  //       if (response.ok) {
+  //         // Use the fetched data to set the CustomerID
+  //         setSignupCustomerID(data.CustomerID);
+  //       } else {
+  //         console.error('Error fetching customer data:', data.error || 'Fetch failed');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error during customer data fetch:', error);
+  //     }
+  //   };
+
+  //   // Call the fetchData function
+  //   fetchData();
+  // }, []); // Empty dependency array ensures the effect runs only once on mount
+  
   const handleSignUp = async () => {
     if (
       !signupName ||
@@ -34,17 +66,29 @@ const RegistrationPage = () => {
     }
 
     try {
-        const response = await fetch('http://localhost:4000/customers', {
+      // Fetch the latest customer ID from the server
+      const idResponse = await fetch('http://localhost:4000/Customer/:Id');
+      const latestCustomerID = await idResponse.json();
+
+      // Increment the latest customer ID to get a new one
+      const newCustomerID = latestCustomerID + 1;
+
+      // Set the new customer ID in the state
+      setSignupCustomerID(newCustomerID);
+      
+      // Now, proceed with the signup logic using newCustomerID
+        const response = await fetch('http://localhost:4000/customer', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                CustomerID: 'your_customer_id',  // Replace with actual data
-                name: 'singupName',
-                PrimaryAddress: 'signupPrimaryAddress', 
+                CustomerID: signupCustomerID,  
+                Name: signupName,
+                PrimaryAddress: signupPrimaryAddress, 
+                SecondaryAddress: signupSecondaryAddress || '', // Use an empty string if secondary address is not provided
                 Email: signupEmail,
-                Username: signupEmail,
+                Username: signupUsername,
                 Password: signupPassword,
             }),
         });
@@ -125,11 +169,15 @@ const RegistrationPage = () => {
         {signupError && <p>{signupError}</p>}
         <label>Name:</label>
         <br />
-        <input type="text" value={signupName} onChange={(e) => setSignupName(e.target.value)} />
+        <input type="name" value={signupName} onChange={(e) => setSignupName(e.target.value)} />
         <br />
         <label>Email:</label>
         <br />
         <input type="email" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} />
+        <br />
+        <label>Username:</label>
+        <br />
+        <input type="username" value={signupUsername} onChange={(e) => setSignupUsername(e.target.value)} />
         <br />
         <label>Password:</label>
         <br />
@@ -137,7 +185,11 @@ const RegistrationPage = () => {
         <br />
         <label>Primary Address:</label>
         <br />
-        <input type="text" value={signupPrimaryAddress} onChange={(e) => setSignupPrimaryAddress(e.target.value)} />
+        <input type="address" value={signupPrimaryAddress} onChange={(e) => setSignupPrimaryAddress(e.target.value)} />
+        <br />
+        <label>Secondary Address:</label>
+        <br />
+        <input type="address2" value={signupSecondaryAddress} onChange={(e) => setSignupSecondaryAddress(e.target.value)} />
         <br />
         <button type="button" onClick={handleSignUp}>
           Sign Up
