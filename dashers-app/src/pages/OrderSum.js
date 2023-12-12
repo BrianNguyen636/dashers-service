@@ -3,6 +3,7 @@ import { Navbar, Nav, Card, Button, Form, FormControl } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './OrderSum.css';
+import HeaderBar from '../components/HeaderBar'
 
 function OrderSum() {
     const [customer, setCustomer] = useState(
@@ -138,20 +139,7 @@ function OrderSum() {
     };
     return (
         <div>
-            <Navbar bg="dark" variant="dark" className="navbar bg-dark">
-                <Navbar.Brand href="/home">
-                    <Button variant="secondary" className="menu-btn">Dashers</Button>
-                </Navbar.Brand>
-                <Nav className="mr-auto">
-                    <Nav.Link href="/res">Restaurant</Nav.Link>
-                    <Nav.Link href="/map">Map</Nav.Link>
-                </Nav>
-
-                {/* shopping cart button */}
-                <Link to="/order" className="ms-auto">
-                    <Button variant="primary">Shopping Cart</Button>
-                </Link>
-            </Navbar>
+            <HeaderBar/>
             <br /><br />
             {/* Checkout screen */}
             <div className="card" id="orderSum">

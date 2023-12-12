@@ -4,6 +4,7 @@ import './restaurantPage.css';
 import { Navbar, Nav, Card, Button, Form, FormControl } from 'react-bootstrap';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import HeaderBar from '../components/HeaderBar'
 
 const RestaurantPage = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -40,21 +41,7 @@ const RestaurantPage = () => {
   const [navbarOpen, setNavbarOpen] = useState(false);
   return (
     <div>
-      <Navbar bg="dark" variant="dark" className="navbar bg-dark">
-        <Navbar.Brand href="/home">
-          <Button variant="secondary" className="menu-btn">Dashers</Button>
-        </Navbar.Brand>
-        <Nav className="mr-auto">
-          <Nav.Link href="/res">Restaurant</Nav.Link>
-          <Nav.Link href="/map">Map</Nav.Link>
-        </Nav>
-
-        {/* shopping cart button */}
-        <Link to="/order" className="ms-auto">
-          <Button variant="primary">Shopping Cart</Button>
-        </Link>
-      </Navbar>
-
+      <HeaderBar/>
 
       <div className="container mt-5">
         <h1 className="text-center mb-4">Explore Restaurants</h1>

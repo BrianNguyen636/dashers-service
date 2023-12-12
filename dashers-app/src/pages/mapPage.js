@@ -4,7 +4,7 @@ import { Navbar, Nav, Button, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import axios from 'axios';
-
+import HeaderBar from '../components/HeaderBar'
 
 const RestaurantCard = ({ name, rating, popularItem, onClick }) => (
   <Card style={{ width: '18rem', marginBottom: '15px' }} onClick={onClick}>
@@ -70,21 +70,7 @@ export default function SimpleMap() {
 
   return (
     <div>
-      <Navbar bg="dark" variant="dark" className="navbar bg-dark">
-        <Navbar.Brand href="/home">
-          <Button variant="secondary" className="menu-btn">
-            Dashers
-          </Button>
-        </Navbar.Brand>
-        <Nav className="mr-auto">
-          <Nav.Link href="/res">Restaurant</Nav.Link>
-          <Nav.Link href="/map">Map</Nav.Link>
-        </Nav>
-
-        <Link to="/order" className="ms-auto">
-          <Button variant="primary">Shopping Cart</Button>
-        </Link>
-      </Navbar>
+      <HeaderBar/>
 
       <div style={{ display: 'flex', height: '100vh' }}>
         <div style={{ flex: 1 }}>
