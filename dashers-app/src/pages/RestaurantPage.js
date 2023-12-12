@@ -46,6 +46,7 @@ const RestaurantPage = () => {
         </Navbar.Brand>
         <Nav className="mr-auto">
           <Nav.Link href="/res">Restaurant</Nav.Link>
+          <Nav.Link href="/map">Map</Nav.Link>
         </Nav>
 
         {/* shopping cart button */}

@@ -5,9 +5,17 @@ import { Link } from 'react-router-dom';
 import GoogleMapReact from 'google-map-react';
 import axios from 'axios';
 
-const Marker = () => (
-  <div style={{ fontSize: '30px', color: 'red' }}>📍</div>
-);
+const Marker = ({ lat, lng }) => {
+  const openDirections = () => {
+    const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    window.open(directionsUrl, '_blank');
+  };
+  return (
+    <div onClick={openDirections} style={{ cursor: 'pointer', fontSize: '30px', color: 'red' }}>
+      📍
+    </div>
+  );
+};
 
 const RestaurantCard = ({ name, rating, popularItem, onClick }) => (
   <Card style={{ width: '18rem', marginBottom: '15px' }} onClick={onClick}>
@@ -29,9 +37,9 @@ export default function SimpleMap() {
   };
   const [mapCenter, setMapCenter] = useState(defaultProps.center);
   const [zoom, setZoom] = useState(defaultProps.zoom);
-  // Function to handle restaurant card click
+  // const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  // handle restaurant card click
   const handleRestaurantClick = (lat, lng) => {
-    console.log("Clicked Restaurant at: ", lat, lng);
     setMapCenter({ lat, lng });
     setZoom(15);
   };
@@ -58,6 +66,7 @@ export default function SimpleMap() {
         </Navbar.Brand>
         <Nav className="mr-auto">
           <Nav.Link href="/res">Restaurant</Nav.Link>
+          <Nav.Link href="/map">Map</Nav.Link>
         </Nav>
 
         {/* shopping cart button */}
