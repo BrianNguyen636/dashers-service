@@ -277,7 +277,7 @@ app.get('/customer/:ID', (request, response) => {
  *          '200':
  *               description: Record successfully added. ID in headers.
  *               headers:
- *                  ID:
+ *                  id:
  *                      type: integer
  *                      description: The newly created user ID.
  *          '400':
@@ -440,7 +440,7 @@ app.get('/orders/:ID', (request, response) => {
  *          '200':
  *               description: Success
  *               headers:
- *                  OrderID:
+ *                  id:
  *                      type: integer
  *                      description: The ID of the first order returned by the query
  * 
@@ -456,7 +456,7 @@ app.get('/customer/:ID/orders', (request, response) => {
         if (err) {
             return response.status(400).json({ Error: "Error in the SQL statement. Please check." });
         }
-        if (result.length > 0) response.setHeader('OrderID', result[0].OrderID);
+        if (result.length > 0) response.setHeader('orderid', result[0].OrderID);
         return response.status(200).json(result);
     });
 });
@@ -510,7 +510,7 @@ app.get('/orders/:ID', (request, response) => {
  *          '200':
  *               description: Successfully added new Order record. ID in header.
  *               headers:
- *                  ID:
+ *                  id:
  *                      type: integer
  *                      description: The newly created Order ID.
  *          '400':
@@ -639,7 +639,7 @@ app.get('/orders/:ID/items', (request, response) => {
  *          '200':
  *               description: Item successfully added.
  *          '400':
- *               description: Failed to add record, possibly incorrect fields or order does not exist.
+ *               description: Failed to add record, possibly incorrect fields or item/order does not exist.
  * 
  */
 app.post('/orders/:ID/items', (request, response) => {
@@ -654,21 +654,68 @@ app.post('/orders/:ID/items', (request, response) => {
         return response.status(200).json({Success: "Successful: Record was added!"});
     });
 });
-// PUT Update Item in Order 
+/**
+ * @swagger
+ * /orders/{OrderID}/items/{ItemID}:
+ *  put:
+ *      description: Update the quantity of an item in an order
+ *      tags:
+ *          - Items
+ *      parameters:
+ *          - in: path
+ *            name: OrderID
+ *            required: true
+ *            description: The ID of the Order.
+ *          - in: path
+ *            name: ItemID
+ *            required: true
+ *            description: The ID of the Item.
+ *          - in: body
+ *            name: options
+ *            schema:
+ *                  type: object
+ *                  properties:
+ *                      Quantity:
+ *                          type: integer
+ *      responses:
+ *          '200':
+ *               description: Item successfully updated.
+ *          '400':
+ *               description: Failed to add record, possibly incorrect fields or item/order does not exist.
+ * 
+ */
 app.put('/orders/:ID/items/:ItemID', (request, response) => {
     const ID = request.params.ID;
     const ItemID = request.params.ItemID;
-    const sqlQuery = 'UPDATE orderitems SET OrderID = ?, ItemID = ?, Quantity = ? WHERE OrderID = ? AND ItemID = ?;';
-
-    const values = [request.body.OrderID, request.body.ItemID, request.body.Quantity];
-    dbConnection.query(sqlQuery, [...values, ID, ItemID], (err, result) => {
+    const sqlQuery = 'UPDATE orderitems SET Quantity = ? WHERE OrderID = ? AND ItemID = ?;';
+    dbConnection.query(sqlQuery, [request.body.Quantity, ID, ItemID], (err, result) => {
         if (err) {
             return response.status(400).json({Error: "Failed: Record was not updated."})
         }
         return response.status(200).json({Success: "Successful: Record was updated!"});
     });
 });
-//DELETE RECORD BY OrderID and ItemID
+/**
+ * @swagger
+ * /orders/{OrderID}/items/{ItemID}:
+ *  delete:
+ *      tags:
+ *          - Items
+ *      description: Deletes the Item of a given ID in the given order.
+ *      parameters:
+ *          - in: path
+ *            name: OrderID
+ *            required: true
+ *            description: The ID of the Customer.
+ *          - in: path
+ *            name: ItemID
+ *            required: true
+ *            description: The ID of the Customer.
+ *      responses:
+ *          '200':
+ *               description: Success
+ * 
+ */
 app.delete('/orders/:ID/items/:ItemID', (request, response) => {
     return deleteID([request.params.ID, request.params.ItemID], "DELETE FROM orderitems WHERE OrderID = ? AND ItemID = ? ; ", response);
 });
