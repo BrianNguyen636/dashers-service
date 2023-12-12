@@ -214,7 +214,14 @@ app.get('/coupons/mail', async (request, response) => {
         return response.status(400).json({Error:"Please provide Name and Email fields in body"});
     }
     const random = await axios.get(`http://localhost:4000/coupons/random`);
-    const code = random.data[0].Code
+    const code = random.data[0].Code;
+    const restaurantID = random.data[0].RestaurantID;
+    const restaurant = await axios.get(`http://localhost:4000/restaurant/` + restaurantID);
+    const restaurantName = restaurant.data[0].Name
+    const itemID = random.data[0].ItemID;
+    const item = await axios.get(`http://localhost:4000/items/` + itemID);
+    const itemName = item.data[0].Name
+    const discount = random.data[0].Discount;
     const req = mailjet
         .post('send', { version: 'v3.1' })
         .request({
@@ -231,7 +238,7 @@ app.get('/coupons/mail', async (request, response) => {
                 }
               ],
               Subject: "Coupon Code from the Dashers app!",
-              TextPart: "Coupon Code: " + code + "\nHappy Dashing!"
+              TextPart: "Get " + discount + "% off " + itemName + " from " + restaurantName + "!\n\nCoupon Code: " + code + "\nHappy Dashing!"
             }
           ]
         })
