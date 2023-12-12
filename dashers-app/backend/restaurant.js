@@ -206,8 +206,13 @@ app.get('/coupons/random', async (request, response) => {
         return response.status(200).json(result);
     });
 });
-
+//GET random coupon code using the Mailjet service to the given Email and Name in the json body.
 app.get('/coupons/mailrandom', async (request, response) => {
+    const name = request.body.Name;
+    const email = request.body.Email;
+    if (name == null || email == null) {
+        return response.status(400).json({Error:"Please provide Name and Email fields in body"});
+    }
     const random = await axios.get(`http://localhost:4000/coupons/random`);
     const code = random.data[0].Code
     const req = mailjet
@@ -221,8 +226,8 @@ app.get('/coupons/mailrandom', async (request, response) => {
               },
               To: [
                 {
-                  Email: "briannguyen636@gmail.com",
-                  Name: "Brian Nguyen"
+                  Email: email,
+                  Name: name
                 }
               ],
               Subject: "Coupon Code from the Dashers app!",
