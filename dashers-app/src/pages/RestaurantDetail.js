@@ -6,11 +6,15 @@ import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
 import HeaderBar from '../components/HeaderBar'
 
+
+
+
 const RestaurantDetail = () => {
     const { RestaurantID } = useParams();
     const [restaurant, setRestaurant] = useState({});
     const [menu, setMenu] = useState({});
     const [reviews, setReviews] = useState([]);
+    const [filter, setFilter] = useState("All");
 
     useEffect(() => {
         const getRestaurant = async () => {
@@ -74,7 +78,19 @@ const RestaurantDetail = () => {
         }
 
     };
-
+    const handleFilter = async (filter) => {
+        setFilter(filter)
+        if (filter == "All") {
+            const menuResponse = await axios.get(`http://localhost:4000/restaurant/${RestaurantID}/items`);
+            setMenu(menuResponse.data);
+        } else if (filter == "Vegetarian") {
+            const menuResponse = await axios.get(`http://localhost:4000/restaurant/${RestaurantID}/items/vegetarian`);
+            setMenu(menuResponse.data);
+        } else {
+            const menuResponse = await axios.get(`http://localhost:4000/restaurant/${RestaurantID}/${filter}`);
+            setMenu(menuResponse.data);
+        }
+    }
     return (
         <div>
             <HeaderBar/>
@@ -90,6 +106,33 @@ const RestaurantDetail = () => {
                             <p>Rating: {restaurant[0].Rating}</p>
                             <p>Popular Item: {restaurant[0].Popular_Item}</p>
                         </h4>
+                        <hr/>
+                        <div class = "btn-group"> 
+                            <button class = {filter === "All" ? ('btn btn-primary'):('btn btn-secondary')}
+                            onClick={()=> handleFilter("All")}>
+                                All
+                            </button>
+                            <button class = {filter === "Entree" ? ('btn btn-primary'):('btn btn-secondary')}
+                            onClick={()=> handleFilter("Entree")}>
+                                Entree
+                            </button>
+                            <button class = {filter === "Side" ? ('btn btn-primary'):('btn btn-secondary')}
+                            onClick={()=> handleFilter("Side")}>
+                                Sides
+                            </button>
+                            <button class = {filter === "Drink" ? ('btn btn-primary'):('btn btn-secondary')}
+                            onClick={()=> handleFilter("Drink")}>
+                                Drink
+                            </button>
+                            <button class = {filter === "Dessert" ? ('btn btn-primary'):('btn btn-secondary')}
+                            onClick={()=> handleFilter("Dessert")}>
+                                Dessert
+                            </button>
+                            <button class = {filter === "Vegetarian" ? ('btn btn-primary'):('btn btn-secondary')}
+                            onClick={()=> handleFilter("Vegetarian")}>
+                                Vegetarian
+                            </button>
+                        </div>
                         <div className="menu-items mt-4">
                             {menu && menu.length > 0 ? (
                                 <Row xs={1} md={3} className="g-4">
