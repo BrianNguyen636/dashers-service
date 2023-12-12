@@ -14,6 +14,8 @@ function OrderSum() {
     const [items, setItems] = useState([]);
     const [item, setItemDesc] = useState([]);
     const [orderTotal, setOrderTotal] = useState(0);
+    const [OrderID, setOrderID] = useState(null);
+    let orderID;
 
     useEffect(() => {
         const getItems = async () => {
@@ -22,11 +24,13 @@ function OrderSum() {
                 // get orderid in progress associated with customerID, replace 0 with customerID
                 const status = "In-Progress";
                 const orderExists = await axios.get(`http://localhost:4000/customer/0/orders?OrderStatus="${status}"`, {});
-                let orderID;
                 if (orderExists.data && orderExists.data.length > 0) {
                     const exists = orderExists.data;
                     orderID = exists[0].OrderID;
+                    setOrderID(exists[0].OrderID);
+                    // pick one eventually
                     console.log(orderID);
+                    console.log(OrderID);
                     // get order items from orderid
                     const itemResponse = await axios.get(`http://localhost:4000/orders/${orderID}/items`);
                     setItems(itemResponse.data);
@@ -50,8 +54,42 @@ function OrderSum() {
         getItems();
     }, []);
 
+    const placeOrder = async () => {
+        try {
+            const orderData = {
+                'OrderID': OrderID,
+                "CustomerID": 0,
+                "DeliveryAddress": "3345",
+                "PaymentStatus": "Credit-Card",
+                "OrderStatus": "Completed",
+            };
+            console.log(orderID);
+            const response = await axios.put(`http://localhost:4000/orders/${OrderID}`, orderData);
 
-
+            if (response.status === 200) {
+                alert('Order placed successfully!');
+                window.location.reload();
+            } else {
+                alert('Failed to place the order. Please try again later.');
+            }
+        } catch (error) {
+            console.error('Error placing the order:', error);
+            alert('An error occurred while placing the order. Please try again later.');
+        }
+    };
+    //
+    const handleDeleteItem = async (itemId) => {
+        try {
+            console.log(OrderID);
+            const response = await axios.delete(`http://localhost:4000/orders/${OrderID}/items/${itemId}`)
+            window.location.reload();
+        }
+        catch (error) {
+            console.error('Error deleting order item, try again', error);
+            alert('Error deleting item from order');
+        }
+        console.log("item deleted");
+    };
     return (
         <div>
             <Navbar bg="dark" variant="dark" className="navbar bg-dark">
@@ -77,12 +115,19 @@ function OrderSum() {
                 <div id="orderBody">
                     <ul id="itemsOrdered">
                         {item.map((itemDetails) => (
-                            <><li key={itemDetails[0].ItemID}>{itemDetails[0].Name} <br></br> {itemDetails[0].Price}</li>
+                            <><li key={itemDetails[0].ItemID}>{itemDetails[0].Name} <br></br>
+                                <span style={{ marginRight: '50px' }}>${itemDetails[0].Price}</span>
+                                <Button
+                                    variant="danger"
+                                    onClick={() => handleDeleteItem(itemDetails[0].ItemID)}
+                                >
+                                    Delete
+                                </Button></li>
                                 <br></br></>
                         ))}
 
                     </ul>
-                    <p>Order Total: {orderTotal}</p>
+                    <p>Order Total: ${orderTotal.toFixed(2)}</p>
                     <Link to="/res">
                         <button className="btn btn-primary">Edit Order</button>
                     </Link>
@@ -101,8 +146,9 @@ function OrderSum() {
                 </div>
                 <hr />
 
-                <button type="button" className="btn btn-primary"> Place Order </button>
-                <br />
+                <button type="button" className="btn btn-primary" onClick={placeOrder}>
+                    Place Order
+                </button><br />
             </div>
         </div>
     );
