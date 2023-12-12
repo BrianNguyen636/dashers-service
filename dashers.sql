@@ -42,7 +42,8 @@ CREATE TABLE `Customers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `Customers` (`CustomerID`, `Name`, `PrimaryAddress`, `SecondaryAddress`, `Email`, `Username`, `Password`) VALUES
-(0, 'John Doe', '1111 Bogus Street', '2222 Sham Ave', 'email@test.com', 'testuser', 'testpassword');
+(0, 'John Doe', '1111 Bogus Street', '2222 Sham Ave', 'email@test.com', 'testuser', 'testpassword'),
+(1, 'Ky Kiske', 'Ilyria Castle', NULL, 'thunder@test.com', 'kykiske', 'dizzysin');
 
 
 -- --------------------------------------------------------
@@ -112,8 +113,8 @@ INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Cal
 -- Popeyes
 INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
 (040, 4, 'Entree', 'Chicken Sandwich', 7.99, 800, 0),
-(041, 4, 'Entree', '10pc Chicken', 10.99, 1200, 0),
-(042, 4, 'Entree', '6pc Chicken', 7.99, 900, 0),
+(041, 4, 'Entree', '10pc Chicken', 20.99, 1200, 0),
+(042, 4, 'Entree', '6pc Chicken', 14.99, 900, 0),
 (043, 4, 'Entree', 'Ghost Pepper Wings', 5.99, 600, 0),
 (044, 4, 'Side', 'Red Beans Rice', 3.99, 500, 1),
 (045, 4, 'Side', 'Mac n Cheese', 3.99, 600, 1),
@@ -207,6 +208,15 @@ CREATE TABLE `OrderItems` (
   `Quantity` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `OrderItems` VALUES 
+(0, 0, 1),
+(0, 3, 1),
+(1, 101, 2),
+(1, 106, 1),
+(2, 12, 1),
+(2, 18, 1);
+
+
 -- --------------------------------------------------------
 
 --
@@ -221,6 +231,12 @@ CREATE TABLE `Orders` (
   `OrderStatus` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `Orders` VALUES 
+(0, 0, (SELECT PrimaryAddress FROM Customers WHERE CustomerID = 0), "Credit-Card", "Completed"),
+(1, 0, (SELECT SecondaryAddress FROM Customers WHERE CustomerID = 0), "Credit-Card", "Completed"),
+(2, 1, (SELECT PrimaryAddress FROM Customers WHERE CustomerID = 1), "Credit-Card", "Completed");
+
+
 --
 -- Table structure for table `FavOrders`
 --
@@ -229,6 +245,10 @@ CREATE TABLE `FavOrders` (
   `CustomerID` bigint(20) UNSIGNED NOT NULL,
   `OrderID` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `FavOrders` VALUES 
+(0, 0),
+(1, 2);
 
 -- --------------------------------------------------------
 
@@ -241,26 +261,28 @@ CREATE TABLE `Restaurant` (
   `Popular_Item` varchar(255) NOT NULL,
   `Rating` int(10) NOT NULL,
   `Image` varchar(255) NOT NULL,
-  `RestaurantID` int(10) NOT NULL
+  `RestaurantID` int(10) NOT NULL,
+  `lat` float(20),
+  `lng` float(20)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `Restaurant`
 --
 
-INSERT INTO `Restaurant` (`Name`, `Popular_Item`, `Rating`, `Image`, `RestaurantID`) VALUES
-('Burger King', 'Whopper', 4, '/images/burgerking.png', 5),
-('Chickfila', 'Chicken Sandwich', 10, '/images/chickfila.jpeg', 1),
-('Denny\'s', 'Omelette', 2, '/images/denny.png', 10),
-('Dicks Drive-In', 'Deluxe Cheeseburger', 9, '/images/dicks.png', 6),
-('IHOP', 'Pancakes', 5, '/images/ihop.png', 7),
-('Jack in the Box', 'Curly Fries', 6, '/images/jackinbox.svg', 12),
-('McDonald\'s', 'Big Mac', 6, '/images/mcdonald.png', 0),
-('Panda Express', 'Chow Mein', 7, '/images/panda.png', 3),
-('Popeyes', 'Chicken Sandwich', 5, '/images/popeyes.png', 4),
-('Red Robin', 'Salad', 6, '/images/redrobin.jpeg', 8),
-('Taco Bell', 'Taco', 10, '/images/tacobell.png', 11),
-('Wendy\'s', 'Four for Four combo', 6, '/images/Wendys.png', 2);
+INSERT INTO `Restaurant` (`Name`, `Popular_Item`, `Rating`, `Image`, `RestaurantID`, `lat`, `lng`) VALUES
+('Burger King', 'Whopper', 4, '/images/burgerking.png', 5, 47.222930, -122.474800),
+('Chickfila', 'Chicken Sandwich', 10, '/images/chickfila.jpeg', 1, 47.221581, -122.468948),
+('Denny''s', 'Omelette', 2, '/images/denny.png', 10, 47.178760, -122.464120 ),
+('Dicks Drive-In', 'Deluxe Cheeseburger', 9, '/images/dicks.png', 6,47.384338,-122.296379 ),
+('IHOP', 'Pancakes', 5, '/images/ihop.png', 7, 47.188690, -122.461310),
+('Jack in the Box', 'Curly Fries', 6, '/images/jackinbox.svg', 12, 47.206680, -122.433580),
+('McDonald''s', 'Big Mac', 6, '/images/mcdonald.png', 0,47.255750, -122.445180 ),
+('Panda Express', 'Chow Mein', 7, '/images/panda.png', 3,47.255840, -122.518880),
+('Popeyes', 'Chicken Sandwich', 5, '/images/popeyes.png', 4,47.255170, -122.522940 ),
+('Red Robin', 'Salad', 6, '/images/redrobin.jpeg', 8,47.221590, -122.467880 ),
+('Taco Bell', 'Taco', 10, '/images/tacobell.png', 11,47.2228046, -122.475523 ),
+('Wendy''s', 'Four for Four combo', 6, '/images/Wendys.png', 2, 47.2198566,-122.4680574);
 
 -- --------------------------------------------------------
 
@@ -273,14 +295,17 @@ CREATE TABLE `Coupons` (
   `RestaurantID` bigint(20) UNSIGNED NOT NULL,
   `ItemID` bigint(20) UNSIGNED NOT NULL,
   `Discount` int(3) NOT NULL,
+  `Code` varchar(255) NOT NULL,
   `Expiration` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-INSERT INTO `Coupons` (`CouponID`, `RestaurantID`, `ItemID`, `Discount`, `Expiration`) VALUES
-(0, 0, 0, 50, '04/02/2024'),
-(1, 1, 18, 100, '05/01/2024'),
-(2, 11, 100, 100, '02/01/2024');
+INSERT INTO `Coupons` (`CouponID`, `RestaurantID`, `ItemID`, `Discount`, `Code`, `Expiration`) VALUES
+(0, 0, 0, 50, 'BIGMAC50', '04/02/2024'),
+(1, 1, 18, 100,'FREECOOKIE', '05/01/2024'),
+(2, 7, 70, 100,'FREEPANCAKE', '11/01/2024'),
+(3, 4, 41, 50,'CHICKEN50', '02/15/2024'),
+(4, 11, 100, 100,'FREETACO','02/01/2024');
 
 --
 -- Table structure for table `Reviews`
@@ -299,8 +324,27 @@ INSERT INTO `Reviews` (`ReviewID`, `RestaurantID`, `Name`, `Rating`, `Body`) VAL
 (1, 4, 'Local Man', 3, 'They never get my order right but it\'s kinda good.'),
 (2, 6, 'Kenji', 5, 'Great burgers for cheap!');
 
+--
+-- Table structure for table `PaymentInfo`
+--
+DROP TABLE IF EXISTS `PaymentInfo`;
+CREATE TABLE `PaymentInfo` (
+  `PaymentID` bigint(20) UNSIGNED NOT NULL,
+  `CustomerID` bigint(20) UNSIGNED NOT NULL,
+  `PaymentType` varchar(255) NOT NULL,
+  `CardNumber` varchar(255),
+  `CardExpiration` varchar(255),
+  `CardSecurity` varchar(255)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
+ALTER TABLE `PaymentInfo`
+  ADD PRIMARY KEY (`PaymentID`),
+  ADD KEY (`CustomerID`),
+  MODIFY `PaymentID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  
+INSERT INTO `PaymentInfo` VALUES
+(0, 0, 'Credit-Card', '1234-4567-7890', '10/27', '123'),
+(1, 1, 'Credit-Card', '1234-4567-7890', '10/27', '123');
 -- --------------------------------------------------------
 
 --
@@ -449,6 +493,7 @@ ALTER TABLE `Coupons`
 --
 ALTER TABLE `Reviews`
   ADD CONSTRAINT `items_ibfk_2` FOREIGN KEY (`RestaurantID`) REFERENCES `Restaurant` (`RestaurantID`);
-
-
+  
+ALTER TABLE `PaymentInfo`
+  ADD CONSTRAINT `paymentinfo_ibfk_1` FOREIGN KEY (`CustomerID`) REFERENCES `Customers` (`CustomerID`);
 COMMIT;

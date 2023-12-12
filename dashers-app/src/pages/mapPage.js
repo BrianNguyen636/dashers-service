@@ -1,79 +1,121 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Button, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import GoogleMapReact from 'google-map-react';
+import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
+import axios from 'axios';
 
-const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
-const RestaurantCard = ({ name, rating, popularItem }) => (
-  <Card style={{ width: '18rem', marginBottom: '15px' }}>
+const RestaurantCard = ({ name, rating, popularItem, onClick }) => (
+  <Card style={{ width: '18rem', marginBottom: '15px' }} onClick={onClick}>
     <Card.Body>
       <Card.Title>{name}</Card.Title>
-      <Card.Subtitle className="mb-2 text-muted">Rating: {rating}</Card.Subtitle>
+      <Card.Subtitle className="mb-2 text-muted">Rating: {rating}/10</Card.Subtitle>
       <Card.Text>Popular Item: {popularItem}</Card.Text>
-      {/* Add more details or buttons as needed */}
     </Card.Body>
   </Card>
 );
 
+const mapContainerStyle = {
+  width: '100%',
+  height: '100vh',
+};
+
 export default function SimpleMap() {
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: 'AIzaSyA_Edk5yCxAejsK0Xl7AdoGFEa0kHu4Q9s',
+  });
+
   const defaultProps = {
     center: {
       lat: 47.2454,
-      lng: -122.4385
+      lng: -122.4385,
     },
-    zoom: 11
+    zoom: 11,
   };
 
-  // Mock restaurant data (replace with your database data)
-  const restaurants = [
-    { id: 1, name: 'Restaurant 1', rating: 4.5, popularItem: 'Pizza' },
-    { id: 2, name: 'Restaurant 2', rating: 3.8, popularItem: 'Burger' },
-    // Add more restaurant data as needed
-  ];
+  const [map, setMap] = useState(null);
+  const [mapCenter, setMapCenter] = useState(defaultProps.center);
+  const [zoom, setZoom] = useState(defaultProps.zoom);
+  const [restaurants, setRestaurants] = useState([]);
+  const [markers, setMarkers] = useState([]);
+
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/restaurant');
+        setRestaurants(response.data);
+      } catch (error) {
+        console.error('Error fetching restaurants:', error);
+      }
+    };
+
+    fetchRestaurants();
+    // const newMarkers = restaurants.map((restaurant) => ({
+    //   id: restaurant.RestaurantID,
+    //   lat: restaurant.lat,
+    //   lng: restaurant.lng,
+    // }));
+    // setMarkers(newMarkers);
+  }, []);
+  const onMapLoad = (map) => {
+    setMap(map);
+  };
+
+  const handleRestaurantClick = (lat, lng) => {
+    setMapCenter({ lat, lng });
+    setZoom(19);
+  };
 
   return (
     <div>
       <Navbar bg="dark" variant="dark" className="navbar bg-dark">
         <Navbar.Brand href="/home">
-          <Button variant="secondary" className="menu-btn">Dashers</Button>
+          <Button variant="secondary" className="menu-btn">
+            Dashers
+          </Button>
         </Navbar.Brand>
         <Nav className="mr-auto">
           <Nav.Link href="/res">Restaurant</Nav.Link>
+          <Nav.Link href="/map">Map</Nav.Link>
         </Nav>
 
-        {/* shopping cart button */}
         <Link to="/order" className="ms-auto">
           <Button variant="primary">Shopping Cart</Button>
         </Link>
       </Navbar>
 
       <div style={{ display: 'flex', height: '100vh' }}>
-        {/* Map */}
         <div style={{ flex: 1 }}>
-          <GoogleMapReact
-            bootstrapURLKeys={{ key: "AIzaSyA_Edk5yCxAejsK0Xl7AdoGFEa0kHu4Q9s" }}
-            defaultCenter={defaultProps.center}
-            defaultZoom={defaultProps.zoom}
-          >
-            <AnyReactComponent
-              lat={59.955413}
-              lng={30.337844}
-              text="My Marker"
-            />
-          </GoogleMapReact>
+          {isLoaded && (
+            <GoogleMap
+              mapContainerStyle={mapContainerStyle}
+              center={mapCenter}
+              zoom={zoom}
+              onLoad={onMapLoad}
+            > 
+            {/* {markers.map((marker) => (
+              <Marker
+                key={marker.id}
+                position={marker.position}
+                onClick={() => handleRestaurantClick(marker.lat, marker.lng)}
+              />
+            ))} */}
+            </GoogleMap>
+          )}
+
         </div>
 
-        {/* Sidebar with restaurant cards */}
         <div style={{ width: '300px', overflowY: 'auto', padding: '10px', backgroundColor: '#f8f9fa' }}>
           <h5>Restaurants</h5>
-          {restaurants.map(restaurant => (
+          {restaurants.map((restaurant) => (
             <RestaurantCard
-              key={restaurant.id}
-              name={restaurant.name}
-              rating={restaurant.rating}
-              popularItem={restaurant.popularItem}
+              key={restaurant.RestaurantID}
+              name={restaurant.Name}
+              rating={restaurant.Rating}
+              popularItem={restaurant.Popular_Item}
+              onClick={() => handleRestaurantClick(restaurant.lat, restaurant.lng)}
             />
           ))}
         </div>

@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './restaurantPage.css';
 import { Navbar, Nav, Card, Button, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 
 const RestaurantDetail = () => {
     const { RestaurantID } = useParams();
@@ -31,49 +31,66 @@ const RestaurantDetail = () => {
     // Function to handle adding an item to the cart
     const AddToCart = async (menuItem) => {
         try {
-            // check if order exists ??
-        //response.getResponseHeader("OrderID")
-        // replace 0 with customerID
-            // const orderExists = await axios.get('http://localhost:4000/customer/orders/0', {
-            //     params: {
-            //         OrderStatus: "sda",
-            //     },
-            // });
-            // console.log(orderExists.getr);
-            // creates new order
-            const body = {
-                CustomerID: 0,
-                DeliveryAddress: "saddsa",
-                PaymentStatus: "sida",
-                OrderStatus: "In-Progress",
-            };
-            const orderResponse = await axios.post(`http://localhost:4000/orders`, body);
-            const order = orderResponse.data;
-            console.log(menuItem.ItemID);
-            const orderItems = {
-                OrderID: order.ID,
+            // check if order exists
+            // replace 0 with customerID
+            // const param = {
+            //     OrderStatus: 'In-Progress',
+            // };
+            const status = "In-Progress";
+            const orderExists = await axios.get(`http://localhost:4000/customer/0/orders?OrderStatus="${status}"`, {
+                // params: param,
+            });
+            let orderID;
+            let orderItems;
+            if (orderExists.data && orderExists.data.length > 0) {
+                const exists = orderExists.data;
+                orderID = exists[0].OrderID;
+                console.log(orderID);
+            } else {
+                // no orders found
+                console.log("No orders found");
+                // creates new order
+                const body = {
+                    CustomerID: 0,
+                    DeliveryAddress: "saddsa",
+                    PaymentStatus: "sida",
+                    OrderStatus: "In-Progress",
+                };
+                const orderResponse = await axios.post(`http://localhost:4000/orders`, body);
+                const order = orderResponse.data;
+                orderID = order.ID;
+            }
+            orderItems = {
+                OrderID: orderID,
                 ItemID: menuItem.ItemID,
                 Quantity: 1,
             };
             // add order items to order
-            const itemResponse = await axios.post(`http://localhost:4000/orders/${order.ID}/items`, orderItems)
-        } catch(error) {
+            const itemResponse = await axios.post(`http://localhost:4000/orders/${orderID}/items`, orderItems)
+            console.log(`Added ${menuItem.Name} to the cart`);
+        } catch (error) {
             console.error('Error adding to cart', error);
         }
-        console.log(`Added ${menuItem.Name} to the cart`);
+
     };
 
     return (
         <div>
             <Navbar bg="dark" variant="dark" className="navbar bg-dark">
                 <Navbar.Brand href="/home">
-                    <Button variant="secondary" className="menu-btn">Dashers</Button> 
+                    <Button variant="secondary" className="menu-btn">Dashers</Button>
                 </Navbar.Brand>
                 <Nav className="mr-auto">
-                    <Nav.Link href="/order">Order</Nav.Link>
                     <Nav.Link href="/res">Restaurant</Nav.Link>
+                    <Nav.Link href="/map">Map</Nav.Link>
                 </Nav>
+
+                {/* shopping cart button */}
+                <Link to="/order" className="ms-auto">
+                    <Button variant="primary">Shopping Cart</Button>
+                </Link>
             </Navbar>
+
             <div className="container mt-5">
                 <h1 className="text-center mb-4">{restaurant.Name} Menu</h1>
                 {Object.keys(restaurant).length > 0 ? (
@@ -121,9 +138,9 @@ const RestaurantDetail = () => {
                                             <Card>
                                                 <Card.Body>
                                                     <Card.Title>{review.Name}:</Card.Title>
-                                                        <div>{review.Rating}/10</div>
-                                                        <br></br>
-                                                        <div><p id="reviewText">Customer states:</p> {review.Body}</div>
+                                                    <div>{review.Rating}/5</div>
+                                                    <br></br>
+                                                    <div><p id="reviewText">Customer states:</p> {review.Body}</div>
                                                 </Card.Body>
                                             </Card>
                                         </Col>
