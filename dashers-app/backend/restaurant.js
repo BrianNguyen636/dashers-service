@@ -207,7 +207,7 @@ app.get('/coupons/random', async (request, response) => {
     });
 });
 //GET random coupon code using the Mailjet service to the given Email and Name in the json body.
-app.get('/coupons/mailrandom', async (request, response) => {
+app.get('/coupons/mail', async (request, response) => {
     const name = request.body.Name;
     const email = request.body.Email;
     if (name == null || email == null) {
