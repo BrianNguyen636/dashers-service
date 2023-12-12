@@ -14,6 +14,9 @@ function OrderSum() {
     const [items, setItems] = useState([]);
     const [item, setItemDesc] = useState([]);
     const [orderTotal, setOrderTotal] = useState(0);
+    const [OrderID, setOrderID] = useState(null);
+    // maybe move this back inside useeffect
+    let orderID;
 
     useEffect(() => {
         const getItems = async () => {
@@ -22,11 +25,12 @@ function OrderSum() {
                 // get orderid in progress associated with customerID, replace 0 with customerID
                 const status = "In-Progress";
                 const orderExists = await axios.get(`http://localhost:4000/customer/0/orders?OrderStatus="${status}"`, {});
-                let orderID;
                 if (orderExists.data && orderExists.data.length > 0) {
                     const exists = orderExists.data;
                     orderID = exists[0].OrderID;
+                    setOrderID(exists[0].OrderID);
                     console.log(orderID);
+                    console.log(OrderID);
                     // get order items from orderid
                     const itemResponse = await axios.get(`http://localhost:4000/orders/${orderID}/items`);
                     setItems(itemResponse.data);
@@ -50,7 +54,29 @@ function OrderSum() {
         getItems();
     }, []);
 
-
+    const placeOrder = async () => {
+        try {
+          const orderData = {
+            'OrderID': OrderID,
+            "CustomerID": 0,
+            "DeliveryAddress": "3345",
+            "PaymentStatus": "Credit-Card",
+            "OrderStatus": "Completed",
+          };
+          console.log(orderID);
+          const response = await axios.put(`http://localhost:4000/orders/${OrderID}`, orderData);
+    
+          if (response.status === 200) {
+            alert('Order placed successfully!');
+            window.location.reload();
+          } else {
+            alert('Failed to place the order. Please try again later.');
+          }
+        } catch (error) {
+          console.error('Error placing the order:', error);
+          alert('An error occurred while placing the order. Please try again later.');
+        }
+      };
 
     return (
         <div>
@@ -101,8 +127,9 @@ function OrderSum() {
                 </div>
                 <hr />
 
-                <button type="button" className="btn btn-primary"> Place Order </button>
-                <br />
+                <button type="button" className="btn btn-primary" onClick={placeOrder}>
+                    Place Order
+                </button><br />
             </div>
         </div>
     );
