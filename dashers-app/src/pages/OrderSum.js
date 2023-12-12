@@ -25,12 +25,12 @@ function OrderSum() {
                 const status = "In-Progress";
                 const orderExists = await axios.get(`http://localhost:4000/customer/0/orders?OrderStatus="${status}"`, {});
                 if (orderExists.data && orderExists.data.length > 0) {
-                    const exists = orderExists.data;
-                    orderID = exists[0].OrderID;
-                    setOrderID(exists[0].OrderID);
+                    const OrderID = orderExists.headers['ID'];
+                    orderID = OrderID;
+                    setOrderID(OrderID);
                     // pick one eventually
-                    console.log(orderID);
-                    console.log(OrderID);
+                    // console.log(orderID);
+                    // console.log(OrderID);
                     // get order items from orderid
                     const itemResponse = await axios.get(`http://localhost:4000/orders/${orderID}/items`);
                     setItems(itemResponse.data);
@@ -63,7 +63,6 @@ function OrderSum() {
                 "PaymentStatus": "Credit-Card",
                 "OrderStatus": "Completed",
             };
-            console.log(orderID);
             const response = await axios.put(`http://localhost:4000/orders/${OrderID}`, orderData);
 
             if (response.status === 200) {
@@ -120,9 +119,7 @@ function OrderSum() {
                                 <Button
                                     variant="danger"
                                     onClick={() => handleDeleteItem(itemDetails[0].ItemID)}
-                                >
-                                    Delete
-                                </Button></li>
+                                >Delete</Button></li>
                                 <br></br></>
                         ))}
 
