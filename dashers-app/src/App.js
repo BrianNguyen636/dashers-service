@@ -3,6 +3,7 @@ import RestaurantPage from "./pages/RestaurantPage";
 import OrderSum from './pages/OrderSum';
 import RestaurantDetail from "./pages/RestaurantDetail";
 import MapPage from "./pages/mapPage";
+import HistoryPage from "./pages/HistoryPage";
 
 
 function App() { 
@@ -18,6 +19,7 @@ return (
   <Route path="/restaurant/detail/:RestaurantID" element={<RestaurantDetail />} />
   <Route path="/order" element={<OrderSum />} />
   <Route path="/map" element={<MapPage />} />
+  <Route path="/history" element={<HistoryPage />} />
 
 </Routes> 
 <div id = "main"> </div>
