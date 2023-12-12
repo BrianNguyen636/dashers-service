@@ -15,6 +15,7 @@ function OrderSum() {
     const [item, setItemDesc] = useState([]);
     const [orderTotal, setOrderTotal] = useState(0);
     const [OrderID, setOrderID] = useState(null);
+    const [appliedCoupon, setAppliedCoupon] = useState("");
     let orderID;
 
     useEffect(() => {
@@ -76,7 +77,53 @@ function OrderSum() {
             alert('An error occurred while placing the order. Please try again later.');
         }
     };
-    //
+    const makeOrderFavorite = async () => {
+        try {
+            const favoriteData = {
+                'ID': 0, //replace with actual customerID
+                'OrderID': OrderID,
+            };
+            // replace 1 with actual customerID
+            const response = await axios.post(`http://localhost:4000/customer/1/orders/favorites/${OrderID}`, favoriteData);
+
+            if (response.status === 200) {
+                alert('Order marked as favorite successfully!');
+            } else {
+                alert('Failed to mark the order as a favorite. Please try again later.');
+            }
+        } catch (error) {
+            console.error('Error marking the order as a favorite:', error);
+            alert('An error occurred while marking the order as a favorite. Please try again later.');
+        }
+    };
+    const handleCouponCodeChange = (event) => {
+        setAppliedCoupon(event.target.value);
+    };
+    const applyCoupon = async () => {
+        try {
+            const response = await axios.get(`http://localhost:4000/coupons?code="${appliedCoupon}"`);
+            const discount = response.data[0].Discount;
+            const id = response.data[0].ItemID;
+            let isCoupon = false;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].ItemID == id) {
+                    isCoupon = true;
+                }
+            }
+            if (isCoupon) {
+                if (orderTotal - discount <= 0) {
+                    setOrderTotal(0);
+                } else {
+                    setOrderTotal(orderTotal - discount);
+                }
+            } else {
+                alert('Coupon cannot be applied to this order');
+            }
+        } catch (error) {
+            console.error('Error applying coupon:', error);
+            alert('An error occurred while applying coupon. Please try again later.');
+        }
+    };
     const handleDeleteItem = async (itemId) => {
         try {
             console.log(OrderID);
@@ -124,10 +171,29 @@ function OrderSum() {
                         ))}
 
                     </ul>
-                    <p>Order Total: ${orderTotal.toFixed(2)}</p>
+                    <div><p id="total">Order Total: ${orderTotal.toFixed(2)}</p>
                     <Link to="/res">
-                        <button className="btn btn-primary">Edit Order</button>
-                    </Link>
+                            <button type="button" className="btn btn-primary" id="edit">Edit Order</button>
+                        </Link></div>
+                    <br></br>
+                    <div id="button-container">
+                        <Form.Group controlId="couponCode">
+                            <Form.Label>Coupon Code</Form.Label>
+                            <FormControl
+                                type="text"
+                                placeholder="Enter coupon code"
+                                value={appliedCoupon}
+                                onChange={handleCouponCodeChange}
+                            />
+                        </Form.Group>
+                        <button type="button" className="btn btn-primary" onClick={applyCoupon}>
+                            Apply Coupon
+                        </button>
+                        <button type="button" className="btn btn-primary" onClick={makeOrderFavorite}>
+                            Make Favorite
+                        </button>                        
+                    </div>
+
                 </div>
                 <hr />
                 <h1>Order Details </h1>
