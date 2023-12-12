@@ -25,9 +25,9 @@ function OrderSum() {
                 const status = "In-Progress";
                 const orderExists = await axios.get(`http://localhost:4000/customer/0/orders?OrderStatus="${status}"`, {});
                 if (orderExists.data && orderExists.data.length > 0) {
-                    const OrderID = orderExists.headers['ID'];
-                    orderID = OrderID;
-                    setOrderID(OrderID);
+                    const exists = orderExists.data;
+                    orderID = exists[0].OrderID;
+                    setOrderID(exists[0].OrderID);
                     // pick one eventually
                     // console.log(orderID);
                     // console.log(OrderID);

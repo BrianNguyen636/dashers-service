@@ -57,7 +57,7 @@ const RestaurantDetail = () => {
                     OrderStatus: "In-Progress",
                 };
                 const orderResponse = await axios.post(`http://localhost:4000/orders`, body);
-                const OrderID = orderResponse.headers['ID'];
+                const OrderID = orderResponse.data;
                 orderID = OrderID;
             }
             orderItems = {
