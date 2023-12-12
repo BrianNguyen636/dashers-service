@@ -1,5 +1,5 @@
 //RegistrationPage.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './registrationPage.css';
 
@@ -19,34 +19,6 @@ const RegistrationPage = () => {
   const [signupPrimaryAddress, setSignupPrimaryAddress] = useState('');
   const [signupSecondaryAddress, setSignupSecondaryAddress] = useState('');
   const navigate = useNavigate();
-
-  // // Add a useEffect hook to fetch customer data on component mount
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch('http://localhost:4000/customer/:ID', {
-  //         method: 'GET',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //       });
-
-  //       const data = await response.json();
-
-  //       if (response.ok) {
-  //         // Use the fetched data to set the CustomerID
-  //         setSignupCustomerID(data.CustomerID);
-  //       } else {
-  //         console.error('Error fetching customer data:', data.error || 'Fetch failed');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error during customer data fetch:', error);
-  //     }
-  //   };
-
-  //   // Call the fetchData function
-  //   fetchData();
-  // }, []); // Empty dependency array ensures the effect runs only once on mount
   
   const handleSignUp = async () => {
     if (
@@ -99,6 +71,9 @@ const RegistrationPage = () => {
             setLoggedIn(true);
             setSignupSuccess(true);
             setSignupError('');
+
+            // Reload the page after successful signup
+            window.location.reload();
         } else {
             setLoggedIn(false);
             setSignupSuccess(false);
