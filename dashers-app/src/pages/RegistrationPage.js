@@ -19,17 +19,24 @@ const RegistrationPage = () => {
 
 
   const handleSignUp = async () => {
-    if (!signupEmail || !signupEmail.includes('@') || !signupEmail.includes('.com') || !signupPassword) {
-        // validations failed, handle accordingly (show an error message, prevent submission, etc.)
-        console.log('Invalid email for sign-up');
-        setSignupSuccess(false);
-        // sets the error message
-        setSignupError('Invalid email or password for sign-up');
-        return;
+    if (
+      !signupName ||
+      !signupEmail ||
+      !signupEmail.includes('@') ||
+      !signupEmail.includes('.com') ||
+      !signupPassword ||
+      !signupPrimaryAddress
+    ) {
+      // validations failed, handle accordingly (show an error message, prevent submission, etc.)
+      console.log('Invalid data for sign-up');
+      setSignupSuccess(false);
+      // sets the error message
+      setSignupError('Invalid data for sign-up');
+      return;
     }
 
     try {
-        const response = await fetch('http://localhost:3000/Customers', {
+        const response = await fetch('http://localhost:3000/customers', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -71,7 +78,7 @@ const RegistrationPage = () => {
       return;
   }
     try {
-        const response = await fetch('http://localhost:3000/Customer/login', {
+        const response = await fetch('http://localhost:4000/customer', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
