@@ -15,8 +15,14 @@ const cors = require("cors")
 const dbConnection = require("./config")
 // use this library for parsing HTTP body requests
 var bodyParser = require('body-parser');
+const Mailjet = require('node-mailjet');
 const { default: axios } = require("axios");
-
+const publicKey = '9ce5976ce1de51d807a1af1f1e8ca173'
+const privateKey = '3d3a497a878a811d28dc64d299b608e6'
+const mailjet = Mailjet.apiConnect(
+    publicKey,
+    privateKey
+);
 
 // ----------------------------------------------
 // (A)  Create an express application instance
@@ -200,6 +206,38 @@ app.get('/coupons/random', async (request, response) => {
         return response.status(200).json(result);
     });
 });
+
+app.get('/coupons/mailrandom', async (request, response) => {
+    const random = await axios.get(`http://localhost:4000/coupons/random`);
+    const code = random.data[0].Code
+    const req = mailjet
+        .post('send', { version: 'v3.1' })
+        .request({
+          Messages: [
+            {
+              From: {
+                Email: "bnguye1@uw.edu",
+                Name: "Dashers-Service"
+              },
+              To: [
+                {
+                  Email: "briannguyen636@gmail.com",
+                  Name: "Brian Nguyen"
+                }
+              ],
+              Subject: "Coupon Code from the Dashers app!",
+              TextPart: "Coupon Code: " + code + "\nHappy Dashing!"
+            }
+          ]
+        })
+
+    req.catch((err) => {
+            console.log(err.statusCode)
+            return response.status(400).json({Error: err});
+        })
+    return response.status(200).json({Success: "Check your email!"});
+});
+
 
 // ----------------------------------------------------------------
 // REVIEWS
