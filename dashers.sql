@@ -113,8 +113,8 @@ INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Cal
 -- Popeyes
 INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
 (040, 4, 'Entree', 'Chicken Sandwich', 7.99, 800, 0),
-(041, 4, 'Entree', '10pc Chicken', 10.99, 1200, 0),
-(042, 4, 'Entree', '6pc Chicken', 7.99, 900, 0),
+(041, 4, 'Entree', '10pc Chicken', 20.99, 1200, 0),
+(042, 4, 'Entree', '6pc Chicken', 14.99, 900, 0),
 (043, 4, 'Entree', 'Ghost Pepper Wings', 5.99, 600, 0),
 (044, 4, 'Side', 'Red Beans Rice', 3.99, 500, 1),
 (045, 4, 'Side', 'Mac n Cheese', 3.99, 600, 1),
@@ -295,14 +295,17 @@ CREATE TABLE `Coupons` (
   `RestaurantID` bigint(20) UNSIGNED NOT NULL,
   `ItemID` bigint(20) UNSIGNED NOT NULL,
   `Discount` int(3) NOT NULL,
+  `Code` varchar(255) NOT NULL,
   `Expiration` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-INSERT INTO `Coupons` (`CouponID`, `RestaurantID`, `ItemID`, `Discount`, `Expiration`) VALUES
-(0, 0, 0, 50, '04/02/2024'),
-(1, 1, 18, 100, '05/01/2024'),
-(2, 11, 100, 100, '02/01/2024');
+INSERT INTO `Coupons` (`CouponID`, `RestaurantID`, `ItemID`, `Discount`, `Code`, `Expiration`) VALUES
+(0, 0, 0, 50, 'BIGMAC50', '04/02/2024'),
+(1, 1, 18, 100,'FREECOOKIE', '05/01/2024'),
+(2, 7, 70, 100,'FREEPANCAKE', '11/01/2024'),
+(3, 4, 41, 50,'CHICKEN50', '02/15/2024'),
+(4, 11, 100, 100,'FREETACO','02/01/2024');
 
 --
 -- Table structure for table `Reviews`
