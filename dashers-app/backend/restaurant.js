@@ -275,11 +275,16 @@ app.get('/customer/:ID', (request, response) => {
  *                          type: string
  *      responses:
  *          '200':
- *               description: Record successfully added. ID in headers.
+ *               description: Json containing ID of newly created record
+ *               type: object
+ *               schema:
+ *                  properties:
+ *                      ID: 
+ *                          type: integer
  *               headers:
- *                  id:
- *                      type: integer
- *                      description: The newly created user ID.
+ *                  Success:
+ *                      type: String
+ *                      description: Record was added
  *          '400':
  *               description: Failed to add record, possibly incorrect fields.
  * 
@@ -294,8 +299,8 @@ app.post('/customer', (request, response) => {
             return response.status(400).json({Error: "Failed: Record was not added."})
         }
         
-        response.setHeader("ID", result.insertId); // send a custom header attribute 
-        return response.status(200).json({'Success':'Record was added!'});
+        response.setHeader('Success', 'Record was added!'); // send a custom header attribute 
+        return response.status(200).json({"ID":result.insertId});
     });
 });
 /**
@@ -438,11 +443,11 @@ app.get('/orders/:ID', (request, response) => {
  *            description: Allows search of a specific order status.
  *      responses:
  *          '200':
- *               description: Success
+ *               description: The ID of the newly created record
  *               headers:
- *                  id:
- *                      type: integer
- *                      description: The ID of the first order returned by the query
+ *                  Success:
+ *                      type: String
+ *                      description: Record was added
  * 
  */
 app.get('/customer/:ID/orders', (request, response) => {
@@ -508,11 +513,16 @@ app.get('/orders/:ID', (request, response) => {
  *                          type: string
  *      responses:
  *          '200':
- *               description: Successfully added new Order record. ID in header.
+ *               description: Json containing ID of newly created record
+ *               type: object
+ *               schema:
+ *                  properties:
+ *                      ID: 
+ *                          type: integer
  *               headers:
- *                  id:
- *                      type: integer
- *                      description: The newly created Order ID.
+ *                  Success:
+ *                      type: String
+ *                      description: Record was added
  *          '400':
  *               description: Failed to add record, possibly incorrect fields or missing CustomerID.
  * 
@@ -525,8 +535,8 @@ app.post('/orders', (request, response) => {
         if (err) {
             return response.status(400).json({Error: "Failed: Record was not added."})
         }
-        response.setHeader("ID", result.insertId); // send a custom header attribute 
-        return response.status(200).json({'Success':'Record was added!'});
+        response.setHeader('Success', 'Record was added!'); // send a custom header attribute 
+        return response.status(200).json({"ID":result.insertId});
     });
 });
 /**
