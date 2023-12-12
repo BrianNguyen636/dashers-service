@@ -595,16 +595,60 @@ app.delete('/orders/:ID', (request, response) => {
 
 // ----------------------------------------------------------------
 // OrderItems
-// GET OrderItems from ID
+/**
+ * @swagger
+ * /orders/{ID}/items:
+ *  get:
+ *      tags:
+ *          - Items
+ *      description: Gets all items from a given order.
+ *      parameters:
+ *          - in: path
+ *            name: ID
+ *            required: true
+ *            description: The ID of the Order.
+ *      responses:
+ *          '200':
+ *               description: Success
+ */
 app.get('/orders/:ID/items', (request, response) => {
     return getID(request.params.ID, "SELECT * FROM orderitems where OrderID = ?", response);
 });
-// POST Item into Order 
+/**
+ * @swagger
+ * /orders/{ID}/items:
+ *  post:
+ *      description: Make a new item in an order
+ *      tags:
+ *          - Items
+ *      parameters:
+ *          - in: path
+ *            name: ID
+ *            required: true
+ *            description: The ID of the Order.
+ *          - in: body
+ *            name: options
+ *            schema:
+ *                  type: object
+ *                  properties:
+ *                      ItemID:
+ *                          type: integer
+ *                      Quantity:
+ *                          type: integer
+ *      responses:
+ *          '200':
+ *               description: Item successfully added.
+ *          '400':
+ *               description: Failed to add record, possibly incorrect fields or order does not exist.
+ * 
+ */
 app.post('/orders/:ID/items', (request, response) => {
-    const sqlQuery = 'INSERT INTO orderitems VALUES (?);';
-    const values = [request.body.OrderID, request.body.ItemID, request.body.Quantity];
+    const ID = request.params.ID;
+    const sqlQuery = 'INSERT INTO orderitems VALUES ( ' + ID + ',?);';
+    const values = [request.body.ItemID, request.body.Quantity];
     dbConnection.query(sqlQuery, [values], (err, result) => {
         if (err) {
+            console.log(err);
             return response.status(400).json({Error: "Failed: Record was not added."})
         }
         return response.status(200).json({Success: "Successful: Record was added!"});
