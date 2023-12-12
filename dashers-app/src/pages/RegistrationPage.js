@@ -6,7 +6,7 @@ import './registrationPage.css';
 const RegistrationPage = () => {
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
-  const [loginEmail, setLoginEmail] = useState('');
+  const [loginUsername, setLoginUsername] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
@@ -15,9 +15,7 @@ const RegistrationPage = () => {
   const [loginError, setLoginError] = useState('');
   const [signupName, setSignupName] = useState('');
   const [signupPrimaryAddress, setSignupPrimaryAddress] = useState('');
-
-
-
+  const navigate = useNavigate();
   const handleSignUp = async () => {
     if (
       !signupName ||
@@ -36,7 +34,7 @@ const RegistrationPage = () => {
     }
 
     try {
-        const response = await fetch('http://localhost:3000/customers', {
+        const response = await fetch('http://localhost:4000/customers', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,7 +70,7 @@ const RegistrationPage = () => {
 
 
   const handleLogin = async () => {
-    if (!loginEmail || !loginPassword) {
+    if (!loginUsername || !loginPassword) {
       setLoginSuccess(false);
       setLoginError('Invalid email or password for login');
       return;
@@ -83,7 +81,7 @@ const RegistrationPage = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ username: loginEmail, password: loginPassword }),
+            body: JSON.stringify({ username: loginUsername, password: loginPassword }),
         });
 
         const data = await response.json();
@@ -112,7 +110,7 @@ const RegistrationPage = () => {
     // if successful, setLoggedIn(false)
     setSignupEmail('');
     setSignupPassword('');
-    setLoginEmail('');
+    setLoginUsername('');
     setLoginPassword('');
     setLoggedIn(false);
     setSignupSuccess(false);
@@ -150,9 +148,9 @@ const RegistrationPage = () => {
         <form>
           <h1>Login</h1>
           {loginError && <p>{loginError}</p>}
-          <label>Email:</label>
+          <label>Username:</label>
           <br />
-          <input type="email" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} />
+          <input type="username" value={loginUsername} onChange={(e) => setLoginUsername(e.target.value)} />
           <br />
           <label>Password:</label>
           <br />
