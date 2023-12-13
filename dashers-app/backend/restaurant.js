@@ -250,16 +250,20 @@ app.get('/customer/:ID', (request, response) => {
 });
 /**
  * @swagger
- * /customer/{Username}:
+ * /customer/{Username}/{Password}:
  *  get:
  *      tags:
  *          - Customers
  *      description: Returns the Customer info of a given username if it exists and if the password matches what is stored.
  *      parameters:
  *          - in: path
- *            name: Username, password
+ *            name: Username
  *            required: true
- *            description: Username and password of customer.
+ *            description: Username of customer.
+ *          - in: path
+ *            name: Password
+ *            required: true
+ *            description: Password of customer.
  *      responses:
  *          '200':
  *               description: Success
