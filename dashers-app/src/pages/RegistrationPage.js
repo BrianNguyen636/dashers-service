@@ -1,5 +1,5 @@
 //RegistrationPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './registrationPage.css';
 import HeaderBar from '../components/HeaderBar';
@@ -22,11 +22,7 @@ const RegistrationPage = () => {
   const [signupSecondaryAddress, setSignupSecondaryAddress] = useState('');
   const [loginCustomerID, setLoginCustomerID] = useState('');
   const navigate = useNavigate();
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> refs/remotes/origin/michael
   const handleSignUp = async () => {
     if (
       !signupName ||
@@ -45,51 +41,6 @@ const RegistrationPage = () => {
     }
 
     try {
-<<<<<<< HEAD
-      // Fetch the latest customer ID from the server
-      const idResponse = await fetch('http://localhost:4000/Customer/:Id');
-      const latestCustomerID = await idResponse.json();
-
-      // Increment the latest customer ID to get a new one
-      const newCustomerID = latestCustomerID + 1;
-
-      // Set the new customer ID in the state
-      setSignupCustomerID(newCustomerID);
-      
-      // Now, proceed with the signup logic using newCustomerID
-        const response = await fetch('http://localhost:4000/customer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                CustomerID: signupCustomerID,  
-                Name: signupName,
-                PrimaryAddress: signupPrimaryAddress, 
-                SecondaryAddress: signupSecondaryAddress || '', // Use an empty string if secondary address is not provided
-                Email: signupEmail,
-                Username: signupUsername,
-                Password: signupPassword,
-            }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            setLoggedIn(true);
-            setSignupSuccess(true);
-            setSignupError('');
-
-            // Reload the page after successful signup
-            window.location.reload();
-        } else {
-            setLoggedIn(false);
-            setSignupSuccess(false);
-            setSignupError(data.error || 'Signup failed');
-        }
-    } catch (error) {
-        console.error('Error during signup:', error);
-=======
       const body = {
         'Name': signupName,
         'PrimaryAddress': signupPrimaryAddress,
@@ -106,7 +57,6 @@ const RegistrationPage = () => {
         setSignupSuccess(true);
         setSignupError('');
       } else {
->>>>>>> refs/remotes/origin/michael
         setLoggedIn(false);
         setSignupSuccess(false);
         setSignupError('Signup failed');
