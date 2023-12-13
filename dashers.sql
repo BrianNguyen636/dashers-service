@@ -194,6 +194,18 @@ INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Cal
 (107, 11, 'Drink', 'Large Drink', 2.99, 300, 1),
 (108, 11, 'Dessert', 'Ice Cream', 1.99, 100, 1),
 (109, 11, 'Side', 'Nachos', 1.99, 100, 1);
+-- Jack in the Box
+INSERT INTO `Items` (`ItemID`, `RestaurantID`, `Category`, `Name`, `Price`, `Calories`, `Vegetarian`) VALUES
+(110, 12, 'Entree', 'Chicken Sandwich', 6.99, 700, 0),
+(111, 12, 'Entree', 'Chicken Nuggets', 5.99, 650, 0),
+(112, 12, 'Entree', 'Salad', 7.99, 400, 1),
+(113, 12, 'Side', 'Curly Fries', 1.99, 200, 1),
+(114, 12, 'Side', 'Large Fries', 3.99, 400, 1),
+(115, 12, 'Side', 'Hash Brown', 1.99, 300, 1),
+(116, 12, 'Drink', 'Small Drink', 1.99, 200, 1),
+(117, 12, 'Drink', 'Large Drink', 2.99, 300, 1),
+(118, 12, 'Dessert', 'Pie', 1.99, 300, 1),
+(119, 12, 'Dessert', 'Milkshake', 3.99, 700, 1);
 
 
 -- --------------------------------------------------------
