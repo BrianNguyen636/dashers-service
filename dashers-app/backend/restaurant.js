@@ -250,6 +250,43 @@ app.get('/customer/:ID', (request, response) => {
 });
 /**
  * @swagger
+ * /customer/{Username}:
+ *  get:
+ *      tags:
+ *          - Customers
+ *      description: Returns the Customer info of a given username if it exists and if the password matches what is stored.
+ *      parameters:
+ *          - in: path
+ *            name: Username, password
+ *            required: true
+ *            description: Username and password of customer.
+ *      responses:
+ *          '200':
+ *               description: Success
+ *          '201':
+ *               description: Username or password not found
+ *          '500':
+ *               description: Internal server error
+ * 
+ */
+ app.get('/customer/login/:Username/:Password', (request, response) => {
+    const user = request.params.Username;
+    const password = request.params.Password;
+    const sqlQuery = "SELECT * FROM Customers WHERE Username = ? AND Password = ?";
+    dbConnection.query(sqlQuery, [user, password], (err, result) => {
+        if (err) {
+            console.error('Error occurred:', err);
+            return response.status(500).send('Internal Server Error');
+        }
+        if (result.length === 0) {
+            return response.status(201).send('Username or Password not found');
+        } 
+        response.setHeader('username', user); // send a custom header attribute 
+        return response.status(200).json(result);
+    });
+});
+/**
+ * @swagger
  * /customer:
  *  post:
  *      description: Create a new Customer profile

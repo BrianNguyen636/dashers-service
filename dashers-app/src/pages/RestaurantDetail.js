@@ -6,15 +6,19 @@ import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
 import HeaderBar from '../components/HeaderBar'
 
-
-
-
 const RestaurantDetail = () => {
-    const { RestaurantID } = useParams();
+    const { RestaurantID, CustomerID } = useParams();
     const [restaurant, setRestaurant] = useState({});
     const [menu, setMenu] = useState({});
     const [reviews, setReviews] = useState([]);
     const [filter, setFilter] = useState("All");
+    const [customer, setCustomer] = useState([]);
+    const [paymentInfo, setPayment] = useState({
+        PaymentType: 'Credit-Card',
+        CardNumber: '12345678910',
+        CardExpiration: '3/30',
+        CardSecurity: '343',
+    });
 
     useEffect(() => {
         const getRestaurant = async () => {
@@ -25,6 +29,16 @@ const RestaurantDetail = () => {
                 setMenu(menuResponse.data);
                 const reviewsResponse = await axios.get(`http://localhost:4000/review/restaurant/${RestaurantID}`);
                 setReviews(reviewsResponse.data);
+                const customerResponse = await axios.get(`http://localhost:4000/customer/${CustomerID}`);
+                setCustomer(customerResponse.data[0]);
+                const paymentResponse = await axios.get(`http://localhost:4000/customer/${CustomerID}/payment`);
+                const paymentData = paymentResponse.data[0] || {};
+                setPayment({
+                    PaymentType: paymentData.PaymentType || 'Credit-Card',
+                    CardNumber: paymentData.CardNumber || '12345678910',
+                    CardExpiration: paymentData.CardExpiration || '3/30',
+                    CardSecurity: paymentData.CardSecurity || '343',
+                });
             } catch (error) {
                 console.error('Error fetching restaurant data:', error);
             }
@@ -42,7 +56,7 @@ const RestaurantDetail = () => {
             //     OrderStatus: 'In-Progress',
             // };
             const status = "In-Progress";
-            const orderExists = await axios.get(`http://localhost:4000/customer/0/orders?OrderStatus="${status}"`, {
+            const orderExists = await axios.get(`http://localhost:4000/customer/${customer.CustomerID}/orders?OrderStatus="${status}"`, {
                 // params: param,
             });
             let orderID;
@@ -56,9 +70,9 @@ const RestaurantDetail = () => {
                 console.log("No orders found");
                 // creates new order
                 const body = {
-                    CustomerID: 0,
-                    DeliveryAddress: "saddsa",
-                    PaymentStatus: "sida",
+                    CustomerID: customer.CustomerID,
+                    DeliveryAddress: customer.PrimaryAddress,
+                    PaymentStatus: paymentInfo.PaymentType || "Credit-Card",
                     OrderStatus: "In-Progress",
                 };
                 const orderResponse = await axios.post(`http://localhost:4000/orders`, body);
@@ -129,7 +143,7 @@ const RestaurantDetail = () => {
     };
     return (
         <div>
-            <HeaderBar />
+            <HeaderBar CustomerID={CustomerID} />
             <div className="container mt-5">
                 <h1 className="text-center mb-4">{restaurant.Name} Menu</h1>
                 {Object.keys(restaurant).length > 0 ? (
@@ -240,7 +254,7 @@ const RestaurantDetail = () => {
                         <div className="mb-3">
                             <label htmlFor="reviewBody" className="form-label">Review</label>
                             <textarea
-                                className="form-control" id="reviewBody" name="Body" value={newReview.Body} 
+                                className="form-control" id="reviewBody" name="Body" value={newReview.Body}
                                 onChange={addReview} rows="4" required
                             ></textarea>
                         </div>

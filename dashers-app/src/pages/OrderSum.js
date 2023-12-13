@@ -1,31 +1,31 @@
 import { useState, React, useEffect } from "react";
 import { Navbar, Nav, Card, Button, Form, FormControl } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import './OrderSum.css';
 import HeaderBar from '../components/HeaderBar'
 
 function OrderSum() {
-    const [customer, setCustomer] = useState(
-        {
-            name: "John Doe",
-            address: "Grove Street"
-        }
-    );
+    const { CustomerID } = useParams();
+    const [customer, setCustomer] = useState([]);
     const [items, setItems] = useState([]);
     const [item, setItemDesc] = useState([]);
     const [orderTotal, setOrderTotal] = useState(0);
     const [OrderID, setOrderID] = useState(null);
     const [appliedCoupon, setAppliedCoupon] = useState("");
+    const [paymentInfo, setPayment] = useState({
+        PaymentType: 'Credit-Card',
+        CardNumber: '12345678910',
+        CardExpiration: '3/30',
+        CardSecurity: '343',
+    });
     let orderID;
-
     useEffect(() => {
         const getItems = async () => {
             try {
                 // first get customerID
-                // get orderid in progress associated with customerID, replace 0 with customerID
                 const status = "In-Progress";
-                const orderExists = await axios.get(`http://localhost:4000/customer/0/orders?OrderStatus="${status}"`, {});
+                const orderExists = await axios.get(`http://localhost:4000/customer/${CustomerID}/orders?OrderStatus="${status}"`, {});
                 if (orderExists.data && orderExists.data.length > 0) {
                     const exists = orderExists.data;
                     orderID = exists[0].OrderID;
@@ -49,6 +49,16 @@ function OrderSum() {
                     setItemDesc(itemDescriptions);
                     setOrderTotal(total);
                 }
+                const customerResponse = await axios.get(`http://localhost:4000/customer/${CustomerID}`);
+                setCustomer(customerResponse.data[0]);
+                const paymentResponse = await axios.get(`http://localhost:4000/customer/${customer.CustomerID}/payment`);
+                const paymentData = paymentResponse.data[0] || {};
+                setPayment({
+                    PaymentType: paymentData.PaymentType || 'Credit-Card',
+                    CardNumber: paymentData.CardNumber || '12345678910',
+                    CardExpiration: paymentData.CardExpiration || '3/30',
+                    CardSecurity: paymentData.CardSecurity || '343',
+                });
             } catch (error) {
                 console.error('Error fetching order items:', error);
             }
@@ -60,9 +70,9 @@ function OrderSum() {
         try {
             const orderData = {
                 'OrderID': OrderID,
-                "CustomerID": 0,
-                "DeliveryAddress": "3345",
-                "PaymentStatus": "Credit-Card",
+                "CustomerID": customer.CustomerID,
+                "DeliveryAddress": customer.PrimaryAddress,
+                "PaymentStatus": paymentInfo.PaymentType,
                 "OrderStatus": "Completed",
             };
             const response = await axios.put(`http://localhost:4000/orders/${OrderID}`, orderData);
@@ -81,7 +91,7 @@ function OrderSum() {
     const makeOrderFavorite = async () => {
         try {
             const favoriteData = {
-                'ID': 0, //replace with actual customerID
+                'ID': customer.CustomerID, //replace with actual customerID
                 'OrderID': OrderID,
             };
             // replace 1 with actual customerID
@@ -127,7 +137,6 @@ function OrderSum() {
     };
     const handleDeleteItem = async (itemId) => {
         try {
-            console.log(OrderID);
             const response = await axios.delete(`http://localhost:4000/orders/${OrderID}/items/${itemId}`)
             window.location.reload();
         }
@@ -135,11 +144,45 @@ function OrderSum() {
             console.error('Error deleting order item, try again', error);
             alert('Error deleting item from order');
         }
-        console.log("item deleted");
+    };
+    const [newPaymentInfo, setNewPaymentInfo] = useState({
+        PaymentType: '',
+        CardNumber: '',
+        CardExpiration: '',
+        CardSecurity: '',
+    });
+    const [isFormVisible, setIsFormVisible] = useState(false);
+
+    const handleInputChange = (e) => {
+        setNewPaymentInfo({
+            ...newPaymentInfo,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const editPayment = async () => {
+        try {
+            const response = await axios.put(`http://localhost:4000/payment/${paymentInfo.PaymentID}`, newPaymentInfo);
+            console.log('Payment updated successfully', response);
+            setIsFormVisible(false);
+            window.location.reload();
+        } catch (error) {
+            console.error('Error editing payment, try again', error);
+            alert('Error editing payment information');
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        editPayment();
+    };
+
+    const toggleFormVisibility = () => {
+        setIsFormVisible(!isFormVisible);
     };
     return (
         <div>
-            <HeaderBar/>
+            <HeaderBar CustomerID={CustomerID} />
             <br /><br />
             {/* Checkout screen */}
             <div className="card" id="orderSum">
@@ -160,7 +203,7 @@ function OrderSum() {
 
                     </ul>
                     <div><p id="total">Order Total: ${orderTotal.toFixed(2)}</p>
-                    <Link to="/res">
+                        <Link to={`/res/${CustomerID}`}>
                             <button type="button" className="btn btn-primary" id="edit">Edit Order</button>
                         </Link></div>
                     <br></br>
@@ -179,7 +222,7 @@ function OrderSum() {
                         </button>
                         <button type="button" className="btn btn-primary" onClick={makeOrderFavorite}>
                             Make Favorite
-                        </button>                        
+                        </button>
                     </div>
 
                 </div>
@@ -188,12 +231,57 @@ function OrderSum() {
                 <hr />
                 <div id="orderDetails">
                     <ul id="detailList">
-                        <li>Customer Name: {customer.name}</li>
-                        <li>Delivery Address: {customer.address}</li>
-                        <li>Payment: { }</li>
-                        <li>Test:</li>
+                        <li>Customer Name: {customer.Name}</li>
+                        <li>Delivery Address: {customer.PrimaryAddress}</li>
+                        <li>Payment: {paymentInfo.PaymentType} <br></br> Card Number: {paymentInfo.CardNumber}
+                            <br></br>CVV: {paymentInfo.CardSecurity} <br></br>EXP: {paymentInfo.CardExpiration}</li>
                     </ul>
-                    <button className="btn btn-primary">Edit Details</button>
+                    <div>
+                        <button className="btn btn-primary" onClick={toggleFormVisibility}>
+                            {isFormVisible ? 'Cancel Edit' : 'Edit Payment'}
+                        </button>
+                        {isFormVisible && (
+                            <form onSubmit={handleSubmit}>
+                                <div>
+                                    <label>Payment Type:</label>
+                                    <input
+                                        type="text"
+                                        name="PaymentType"
+                                        value={newPaymentInfo.PaymentType}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                                <div>
+                                    <label>Card Number:</label>
+                                    <input
+                                        type="text"
+                                        name="CardNumber"
+                                        value={newPaymentInfo.CardNumber}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                                <div>
+                                    <label>Card Expiration:</label>
+                                    <input
+                                        type="text"
+                                        name="CardExpiration"
+                                        value={newPaymentInfo.CardExpiration}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                                <div>
+                                    <label>Card Security Code:</label>
+                                    <input
+                                        type="text"
+                                        name="CardSecurity"
+                                        value={newPaymentInfo.CardSecurity}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                                <button class="btn btn-primary" type="submit">Update Payment</button>
+                            </form>
+                        )}
+                    </div>
                 </div>
                 <hr />
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Button, Card } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import axios from 'axios';
 import HeaderBar from '../components/HeaderBar'
@@ -22,6 +22,7 @@ const mapContainerStyle = {
 };
 
 export default function SimpleMap() {
+  const { CustomerID } = useParams();
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: 'AIzaSyA_Edk5yCxAejsK0Xl7AdoGFEa0kHu4Q9s',
@@ -70,8 +71,7 @@ export default function SimpleMap() {
 
   return (
     <div>
-      <HeaderBar />
-
+      <HeaderBar CustomerID={CustomerID} />
       <div style={{ display: 'flex', height: '100vh' }}>
         <div style={{ flex: 1 }}>
           {isLoaded && (
