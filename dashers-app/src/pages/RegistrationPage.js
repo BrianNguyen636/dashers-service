@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './registrationPage.css';
+import HeaderBar from '../components/HeaderBar';
+import axios from 'axios';
 
 const RegistrationPage = () => {
   const [signupCustomerID, setSignupCustomerID] = useState('');
@@ -18,8 +20,13 @@ const RegistrationPage = () => {
   const [signupName, setSignupName] = useState('');
   const [signupPrimaryAddress, setSignupPrimaryAddress] = useState('');
   const [signupSecondaryAddress, setSignupSecondaryAddress] = useState('');
+  const [loginCustomerID, setLoginCustomerID] = useState('');
   const navigate = useNavigate();
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> refs/remotes/origin/michael
   const handleSignUp = async () => {
     if (
       !signupName ||
@@ -38,6 +45,7 @@ const RegistrationPage = () => {
     }
 
     try {
+<<<<<<< HEAD
       // Fetch the latest customer ID from the server
       const idResponse = await fetch('http://localhost:4000/Customer/:Id');
       const latestCustomerID = await idResponse.json();
@@ -81,11 +89,35 @@ const RegistrationPage = () => {
         }
     } catch (error) {
         console.error('Error during signup:', error);
+=======
+      const body = {
+        'Name': signupName,
+        'PrimaryAddress': signupPrimaryAddress,
+        'SecondaryAddress': signupSecondaryAddress || '', // Use an empty string if secondary address is not provided
+        'Email': signupEmail,
+        'Username': signupUsername,
+        'Password': signupPassword,
+      }
+      const response = await axios.post(`http://localhost:4000/customer`, body);
+      setSignupCustomerID(response.data.ID);
+      setLoginCustomerID(response.data.ID);
+      if (response.status == '200') {
+        setLoggedIn(true);
+        setSignupSuccess(true);
+        setSignupError('');
+      } else {
+>>>>>>> refs/remotes/origin/michael
         setLoggedIn(false);
         setSignupSuccess(false);
         setSignupError('Signup failed');
+      }
+    } catch (error) {
+      console.error('Error during signup:', error);
+      setLoggedIn(false);
+      setSignupSuccess(false);
+      setSignupError('Signup failed');
     }
-};
+  };
 
 
   const handleLogin = async () => {
@@ -93,35 +125,25 @@ const RegistrationPage = () => {
       setLoginSuccess(false);
       setLoginError('Invalid email or password for login');
       return;
-  }
+    }
     try {
-        const response = await fetch('http://localhost:4000/customer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username: loginUsername, password: loginPassword }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            setLoggedIn(true);
-            setLoginSuccess(true);
-            setLoginError('');
-
-            // Redirect to the homepage or another route after successful login
-            navigate('/home');
-        } else {
-            setLoggedIn(false);
-            setLoginSuccess(false);
-            setLoginError(data.error || 'Login failed');
-        }
-    } catch (error) {
-        console.error('Error during login:', error);
+      const response = await axios.get(`http://localhost:4000/customer/login/${loginUsername}/${loginPassword}`);
+      if (response.status == '201') {
         setLoggedIn(false);
         setLoginSuccess(false);
         setLoginError('Login failed');
+      } else {
+        setLoggedIn(true);
+        setLoginSuccess(true);
+        setLoginError('');
+        setLoginCustomerID(response.data[0].CustomerID);
+        navigate(`/home/${response.data[0].CustomerID}`);
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      setLoggedIn(false);
+      setLoginSuccess(false);
+      setLoginError('Login failed');
     }
   };
 
@@ -137,73 +159,104 @@ const RegistrationPage = () => {
   };
 
   return (
-    <div className="registration-page">
-      <div className="forms-container">
-      <form>
-        <h1>Sign Up</h1>
-        {signupError && <p>{signupError}</p>}
-        <label>Name:</label>
-        <br />
-        <input type="name" value={signupName} onChange={(e) => setSignupName(e.target.value)} />
-        <br />
-        <label>Email:</label>
-        <br />
-        <input type="email" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} />
-        <br />
-        <label>Username:</label>
-        <br />
-        <input type="username" value={signupUsername} onChange={(e) => setSignupUsername(e.target.value)} />
-        <br />
-        <label>Password:</label>
-        <br />
-        <input type="password" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} />
-        <br />
-        <label>Primary Address:</label>
-        <br />
-        <input type="address" value={signupPrimaryAddress} onChange={(e) => setSignupPrimaryAddress(e.target.value)} />
-        <br />
-        <label>Secondary Address:</label>
-        <br />
-        <input type="address2" value={signupSecondaryAddress} onChange={(e) => setSignupSecondaryAddress(e.target.value)} />
-        <br />
-        <button type="button" onClick={handleSignUp}>
-          Sign Up
-        </button>
-          {loggedIn && signupSuccess && <p>Sign-up successful! You are now logged in.</p>}
-        </form>
+    <div>
+      <HeaderBar CustomerID={loginCustomerID} />
+      <div className="registration-page">
+        <div className="forms-container">
+          <form className="form1">
+            <h1>Sign Up</h1>
+            {signupError && <p>{signupError}</p>}
+            <label>Name:</label>
+            <br />
+            <input type="name" value={signupName} onChange={(e) => setSignupName(e.target.value)} />
+            <br />
+            <label>Email:</label>
+            <br />
+            <input type="email" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} />
+            <br />
+            <label>Username:</label>
+            <br />
+            <input type="username" value={signupUsername} onChange={(e) => setSignupUsername(e.target.value)} />
+            <br />
+            <label>Password:</label>
+            <br />
+            <input type="password" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} />
+            <br />
+            <label>Primary Address:</label>
+            <br />
+            <input type="address" value={signupPrimaryAddress} onChange={(e) => setSignupPrimaryAddress(e.target.value)} />
+            <br />
+            <label>Secondary Address:</label>
+            <br />
+            <input type="address2" value={signupSecondaryAddress} onChange={(e) => setSignupSecondaryAddress(e.target.value)} />
+            <br />
+            <button type="button" onClick={handleSignUp}>
+              Sign Up
+            </button>
+            {loggedIn && signupSuccess && <p>Sign-up successful! You are now logged in.</p>}
+          </form>
 
-        <form>
-          <h1>Login</h1>
-          {loginError && <p>{loginError}</p>}
-          <label>Username:</label>
-          <br />
-          <input type="username" value={loginUsername} onChange={(e) => setLoginUsername(e.target.value)} />
-          <br />
-          <label>Password:</label>
-          <br />
-          <input type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
-          <br />
-          <button type="button" onClick={handleLogin}>
-            Login
-          </button>
-          {loggedIn && loginSuccess && <p>Login successful! Welcome back.</p>}
-        </form>
-      </div>
+          <form className="form1">
+            <h1>Login</h1>
+            {loginError && <p>{loginError}</p>}
+            <label>Username:</label>
+            <br />
+            <input type="username" value={loginUsername} onChange={(e) => setLoginUsername(e.target.value)} />
+            <br />
+            <label>Password:</label>
+            <br />
+            <input type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
+            <br />
+            <button type="button" onClick={handleLogin}>
+              Login
+            </button>
+            {loggedIn && loginSuccess && <p>Login successful! Welcome back.</p>}
+          </form>
+        </div>
 
-      {loggedIn ? (
-        <div>
-          <h1>Welcome, User!</h1>
-          <button type="button" onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
-      ) : (
-        <div>
-        <h1>Please Sign Up or Login </h1>
-        </div>
-      )}
+        {
+          loggedIn ? (
+            <div>
+              <h1>Welcome, User!</h1>
+              <button type="button" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div>
+              <h1>Please Sign Up or Login </h1>
+            </div>
+          )
+        }
+      </div >
     </div>
+
   );
 };
 
 export default RegistrationPage;
+
+     // // Fetch the latest customer ID from the server
+      // const idResponse = await fetch('http://localhost:4000/Customer/:Id');
+      // const latestCustomerID = await idResponse.json();
+
+
+      // // Set the new customer ID in the state
+      // setSignupCustomerID(newCustomerID);
+
+      // // Now, proceed with the signup logic using newCustomerID
+      // const response = await fetch('http://localhost:4000/customer', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({
+      //     CustomerID: signupCustomerID,
+      //     Name: signupName,
+      //     PrimaryAddress: signupPrimaryAddress,
+      //     SecondaryAddress: signupSecondaryAddress || '', // Use an empty string if secondary address is not provided
+      //     Email: signupEmail,
+      //     Username: signupUsername,
+      //     Password: signupPassword,
+      //   }),
+      // });

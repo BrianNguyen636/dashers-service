@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Button, Card } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import axios from 'axios';
-
+import HeaderBar from '../components/HeaderBar'
 
 const RestaurantCard = ({ name, rating, popularItem, onClick }) => (
   <Card style={{ width: '18rem', marginBottom: '15px' }} onClick={onClick}>
@@ -22,6 +22,7 @@ const mapContainerStyle = {
 };
 
 export default function SimpleMap() {
+  const { CustomerID } = useParams();
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: 'AIzaSyA_Edk5yCxAejsK0Xl7AdoGFEa0kHu4Q9s',
@@ -52,12 +53,12 @@ export default function SimpleMap() {
     };
 
     fetchRestaurants();
-    // const newMarkers = restaurants.map((restaurant) => ({
-    //   id: restaurant.RestaurantID,
-    //   lat: restaurant.lat,
-    //   lng: restaurant.lng,
-    // }));
-    // setMarkers(newMarkers);
+    const newMarkers = restaurants.map((restaurant) => ({
+      id: restaurant.RestaurantID,
+      lat: restaurant.lat,
+      lng: restaurant.lng,
+    }));
+    setMarkers(newMarkers);
   }, []);
   const onMapLoad = (map) => {
     setMap(map);
@@ -70,22 +71,7 @@ export default function SimpleMap() {
 
   return (
     <div>
-      <Navbar bg="dark" variant="dark" className="navbar bg-dark">
-        <Navbar.Brand href="/home">
-          <Button variant="secondary" className="menu-btn">
-            Dashers
-          </Button>
-        </Navbar.Brand>
-        <Nav className="mr-auto">
-          <Nav.Link href="/res">Restaurant</Nav.Link>
-          <Nav.Link href="/map">Map</Nav.Link>
-        </Nav>
-
-        <Link to="/order" className="ms-auto">
-          <Button variant="primary">Shopping Cart</Button>
-        </Link>
-      </Navbar>
-
+      <HeaderBar CustomerID={CustomerID} />
       <div style={{ display: 'flex', height: '100vh' }}>
         <div style={{ flex: 1 }}>
           {isLoaded && (
@@ -94,14 +80,14 @@ export default function SimpleMap() {
               center={mapCenter}
               zoom={zoom}
               onLoad={onMapLoad}
-            > 
-            {/* {markers.map((marker) => (
-              <Marker
-                key={marker.id}
-                position={marker.position}
-                onClick={() => handleRestaurantClick(marker.lat, marker.lng)}
-              />
-            ))} */}
+            >
+              {markers.map((marker) => (
+                <Marker
+                  key={marker.id}
+                  position={marker.position}
+                  onClick={() => handleRestaurantClick(marker.lat, marker.lng)}
+                />
+              ))}
             </GoogleMap>
           )}
 
