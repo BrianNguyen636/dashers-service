@@ -3,10 +3,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './restaurantPage.css';
 import { Navbar, Nav, Card, Button, Form, FormControl } from 'react-bootstrap';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import HeaderBar from '../components/HeaderBar'
 
 const RestaurantPage = () => {
+  const { CustomerID } = useParams();
   const [restaurants, setRestaurants] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [hoveredCard, setHoveredCard] = useState(null);
@@ -41,8 +42,7 @@ const RestaurantPage = () => {
   const [navbarOpen, setNavbarOpen] = useState(false);
   return (
     <div>
-      <HeaderBar/>
-
+      <HeaderBar CustomerID={CustomerID} />
       <div className="container mt-5">
         <h1 className="text-center mb-4">Explore Restaurants</h1>
         <div>
@@ -60,7 +60,7 @@ const RestaurantPage = () => {
           {filteredRestaurants.map((restaurant, index) => (
             <div key={restaurant.RestaurantID} className="col-md-4 mb-4" onMouseEnter={() => handleCardHover(index)}
               onMouseLeave={handleCardLeave}>
-              <Link to={`/restaurant/detail/${restaurant.RestaurantID}`} style={{ textDecoration: 'none' }}>
+              <Link to={`/restaurant/detail/${restaurant.RestaurantID}/${CustomerID}`} style={{ textDecoration: 'none' }}>
                 <Card className="custom-card">
                   <Card.Img variant="top" src={restaurant.Image} className="card-image" />
                   <Card.Body>

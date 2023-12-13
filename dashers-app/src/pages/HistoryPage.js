@@ -1,11 +1,12 @@
 import { useState, React, useEffect } from "react";
 import { Navbar, Nav, Card, Button, Form, FormControl } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import './HistoryPage.css';
 import HeaderBar from '../components/HeaderBar'
 
 function OrderSum() {
+    const { CustomerID } = useParams();
     const [orders, setOrders] = useState([]);
     const [OrderID, setOrderID] = useState(null);
     const [items, setItems] = useState([]);
@@ -15,8 +16,7 @@ function OrderSum() {
             try {
                 // first get customerID
                 // get orderid in progress associated with customerID, replace 0 with customerID
-                const customerID = 0;
-                const customerExists = await axios.get(`http://localhost:4000/customer/${customerID}/orders`, {});
+                const customerExists = await axios.get(`http://localhost:4000/customer/${CustomerID}/orders`, {});
                 if (customerExists.data && customerExists.data.length > 0) {
                     const exists = customerExists.data;
                     setOrders(exists);
@@ -58,7 +58,7 @@ function OrderSum() {
 
     return (
         <div>
-            <HeaderBar/>
+            <HeaderBar CustomerID={CustomerID} />
             <br /><br />
             {/* Checkout screen */}
             <div className="card" id="orderSum">
@@ -66,31 +66,31 @@ function OrderSum() {
                 <h1>Order History</h1>
                 <hr />
                 <div id="orderBody">
-  
+
                     {orders.map((details) => (
                         <div key={details.OrderID}>
-                            
+
                             <b>Order Status:</b> {details.OrderStatus}
-                            <br/>
+                            <br />
                             <b>Delivery Address:</b> {details.DeliveryAddress}
-                            <br/>
+                            <br />
                             <b>Payment Status:</b> {details.PaymentStatus}
 
                             <Button
                                 variant="danger"
-                                //GO TO ORDER
-                                // onClick={() => }
+                            //GO TO ORDER
+                            // onClick={() => }
                             >See Order</Button>
                             <Button
-                                //GO TO ORDER
-                                // onClick={() => }
+                            //GO TO ORDER
+                            // onClick={() => }
                             >Favorite</Button>
                             <br></br>
                             <hr></hr>
                         </div>
                     ))}
 
-                    <Link to="/res">
+                    <Link to={`/res/${CustomerID}`}>
                         <button className="btn btn-primary">Return</button>
                     </Link>
                 </div>

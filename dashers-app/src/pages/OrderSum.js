@@ -1,27 +1,31 @@
 import { useState, React, useEffect } from "react";
 import { Navbar, Nav, Card, Button, Form, FormControl } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import './OrderSum.css';
 import HeaderBar from '../components/HeaderBar'
 
 function OrderSum() {
+    const { CustomerID } = useParams();
     const [customer, setCustomer] = useState([]);
     const [items, setItems] = useState([]);
     const [item, setItemDesc] = useState([]);
     const [orderTotal, setOrderTotal] = useState(0);
     const [OrderID, setOrderID] = useState(null);
     const [appliedCoupon, setAppliedCoupon] = useState("");
-    const [paymentInfo, setPayment] = useState([]);
+    const [paymentInfo, setPayment] = useState({
+        PaymentType: 'Credit-Card',
+        CardNumber: '12345678910',
+        CardExpiration: '3/30',
+        CardSecurity: '343',
+    });
     let orderID;
-
     useEffect(() => {
         const getItems = async () => {
             try {
                 // first get customerID
-                // get orderid in progress associated with customerID, replace 0 with customerID
                 const status = "In-Progress";
-                const orderExists = await axios.get(`http://localhost:4000/customer/0/orders?OrderStatus="${status}"`, {});
+                const orderExists = await axios.get(`http://localhost:4000/customer/${CustomerID}/orders?OrderStatus="${status}"`, {});
                 if (orderExists.data && orderExists.data.length > 0) {
                     const exists = orderExists.data;
                     orderID = exists[0].OrderID;
@@ -44,11 +48,17 @@ function OrderSum() {
                     });
                     setItemDesc(itemDescriptions);
                     setOrderTotal(total);
-                    const customerResponse = await axios.get(`http://localhost:4000/customer/0`);
-                    setCustomer(customerResponse.data[0]);
-                    const paymentResponse = await axios.get(`http://localhost:4000/customer/${customer.CustomerID}/payment`);
-                    setPayment(paymentResponse.data[0]);
                 }
+                const customerResponse = await axios.get(`http://localhost:4000/customer/${CustomerID}`);
+                setCustomer(customerResponse.data[0]);
+                const paymentResponse = await axios.get(`http://localhost:4000/customer/${customer.CustomerID}/payment`);
+                const paymentData = paymentResponse.data[0] || {};
+                setPayment({
+                    PaymentType: paymentData.PaymentType || 'Credit-Card',
+                    CardNumber: paymentData.CardNumber || '12345678910',
+                    CardExpiration: paymentData.CardExpiration || '3/30',
+                    CardSecurity: paymentData.CardSecurity || '343',
+                });
             } catch (error) {
                 console.error('Error fetching order items:', error);
             }
@@ -172,7 +182,7 @@ function OrderSum() {
     };
     return (
         <div>
-            <HeaderBar />
+            <HeaderBar CustomerID={CustomerID} />
             <br /><br />
             {/* Checkout screen */}
             <div className="card" id="orderSum">
@@ -193,7 +203,7 @@ function OrderSum() {
 
                     </ul>
                     <div><p id="total">Order Total: ${orderTotal.toFixed(2)}</p>
-                        <Link to="/res">
+                        <Link to={`/res/${CustomerID}`}>
                             <button type="button" className="btn btn-primary" id="edit">Edit Order</button>
                         </Link></div>
                     <br></br>
