@@ -52,12 +52,12 @@ export default function SimpleMap() {
     };
 
     fetchRestaurants();
-    // const newMarkers = restaurants.map((restaurant) => ({
-    //   id: restaurant.RestaurantID,
-    //   lat: restaurant.lat,
-    //   lng: restaurant.lng,
-    // }));
-    // setMarkers(newMarkers);
+    const newMarkers = restaurants.map((restaurant) => ({
+      id: restaurant.RestaurantID,
+      lat: restaurant.lat,
+      lng: restaurant.lng,
+    }));
+    setMarkers(newMarkers);
   }, []);
   const onMapLoad = (map) => {
     setMap(map);
@@ -70,7 +70,7 @@ export default function SimpleMap() {
 
   return (
     <div>
-      <HeaderBar/>
+      <HeaderBar />
 
       <div style={{ display: 'flex', height: '100vh' }}>
         <div style={{ flex: 1 }}>
@@ -80,14 +80,14 @@ export default function SimpleMap() {
               center={mapCenter}
               zoom={zoom}
               onLoad={onMapLoad}
-            > 
-            {/* {markers.map((marker) => (
-              <Marker
-                key={marker.id}
-                position={marker.position}
-                onClick={() => handleRestaurantClick(marker.lat, marker.lng)}
-              />
-            ))} */}
+            >
+              {markers.map((marker) => (
+                <Marker
+                  key={marker.id}
+                  position={marker.position}
+                  onClick={() => handleRestaurantClick(marker.lat, marker.lng)}
+                />
+              ))}
             </GoogleMap>
           )}
 

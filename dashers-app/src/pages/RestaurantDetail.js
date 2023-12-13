@@ -91,9 +91,45 @@ const RestaurantDetail = () => {
             setMenu(menuResponse.data);
         }
     }
+    const [newReview, setNewReview] = useState({
+        RestaurantID: RestaurantID,
+        Name: '',
+        Rating: '',
+        Body: '',
+    });
+
+    const addReview = (event) => {
+        const { name, value } = event.target;
+        setNewReview({
+            ...newReview,
+            [name]: value,
+        });
+    };
+    const submitReview = async (event) => {
+        event.preventDefault();
+        try {
+            console.log(newReview);
+            const response = await axios.post(`http://localhost:4000/review`, newReview);
+            if (response.status === 200) {
+                alert('Review submitted successfully!');
+                setNewReview({
+                    restaurantid: RestaurantID,
+                    name: '',
+                    rating: '',
+                    body: '',
+                });
+                window.location.reload();
+            } else {
+                alert('Failed to submit the review. Please try again later.');
+            }
+        } catch (error) {
+            console.error('Error submitting the review:', error);
+            alert('An error occurred while submitting the review. Please try again later.');
+        }
+    };
     return (
         <div>
-            <HeaderBar/>
+            <HeaderBar />
             <div className="container mt-5">
                 <h1 className="text-center mb-4">{restaurant.Name} Menu</h1>
                 {Object.keys(restaurant).length > 0 ? (
@@ -106,30 +142,30 @@ const RestaurantDetail = () => {
                             <p>Rating: {restaurant[0].Rating}</p>
                             <p>Popular Item: {restaurant[0].Popular_Item}</p>
                         </h4>
-                        <hr/>
-                        <div class = "btn-group"> 
-                            <button class = {filter === "All" ? ('btn btn-primary'):('btn btn-secondary')}
-                            onClick={()=> handleFilter("All")}>
+                        <hr />
+                        <div className="btn-group">
+                            <button className={filter === "All" ? ('btn btn-primary') : ('btn btn-secondary')}
+                                onClick={() => handleFilter("All")}>
                                 All
                             </button>
-                            <button class = {filter === "Entree" ? ('btn btn-primary'):('btn btn-secondary')}
-                            onClick={()=> handleFilter("Entree")}>
+                            <button className={filter === "Entree" ? ('btn btn-primary') : ('btn btn-secondary')}
+                                onClick={() => handleFilter("Entree")}>
                                 Entree
                             </button>
-                            <button class = {filter === "Side" ? ('btn btn-primary'):('btn btn-secondary')}
-                            onClick={()=> handleFilter("Side")}>
+                            <button className={filter === "Side" ? ('btn btn-primary') : ('btn btn-secondary')}
+                                onClick={() => handleFilter("Side")}>
                                 Sides
                             </button>
-                            <button class = {filter === "Drink" ? ('btn btn-primary'):('btn btn-secondary')}
-                            onClick={()=> handleFilter("Drink")}>
+                            <button className={filter === "Drink" ? ('btn btn-primary') : ('btn btn-secondary')}
+                                onClick={() => handleFilter("Drink")}>
                                 Drink
                             </button>
-                            <button class = {filter === "Dessert" ? ('btn btn-primary'):('btn btn-secondary')}
-                            onClick={()=> handleFilter("Dessert")}>
+                            <button className={filter === "Dessert" ? ('btn btn-primary') : ('btn btn-secondary')}
+                                onClick={() => handleFilter("Dessert")}>
                                 Dessert
                             </button>
-                            <button class = {filter === "Vegetarian" ? ('btn btn-primary'):('btn btn-secondary')}
-                            onClick={()=> handleFilter("Vegetarian")}>
+                            <button className={filter === "Vegetarian" ? ('btn btn-primary') : ('btn btn-secondary')}
+                                onClick={() => handleFilter("Vegetarian")}>
                                 Vegetarian
                             </button>
                         </div>
@@ -184,6 +220,35 @@ const RestaurantDetail = () => {
                 ) : (
                     <p>Loading...</p>
                 )}
+                <div className="review-form mt-4">
+                    <h2>Leave a Review</h2>
+                    <form onSubmit={submitReview}>
+                        <div className="mb-3">
+                            <label htmlFor="reviewName" className="form-label">Name</label>
+                            <input
+                                type="text" className="form-control" id="reviewName" name="Name"
+                                value={newReview.Name} onChange={addReview} required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="reviewRating" className="form-label">Rating</label>
+                            <input
+                                type="number" className="form-control" id="reviewRating" name="Rating" value={newReview.Rating}
+                                onChange={addReview} min="1" max="5" required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="reviewBody" className="form-label">Review</label>
+                            <textarea
+                                className="form-control" id="reviewBody" name="Body" value={newReview.Body} 
+                                onChange={addReview} rows="4" required
+                            ></textarea>
+                        </div>
+                        <button type="submit" className="btn btn-primary">
+                            Submit Review
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     );
