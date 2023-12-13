@@ -3,18 +3,16 @@ import { Navbar, Nav, Card, Button, Form, FormControl } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './OrderSum.css';
+import HeaderBar from '../components/HeaderBar'
 
 function OrderSum() {
-    const [customer, setCustomer] = useState(
-        {
-            name: "John Doe",
-            address: "Grove Street"
-        }
-    );
+    const [customer, setCustomer] = useState([]);
     const [items, setItems] = useState([]);
     const [item, setItemDesc] = useState([]);
     const [orderTotal, setOrderTotal] = useState(0);
     const [OrderID, setOrderID] = useState(null);
+    const [appliedCoupon, setAppliedCoupon] = useState("");
+    const [paymentInfo, setPayment] = useState([]);
     let orderID;
 
     useEffect(() => {
@@ -46,6 +44,10 @@ function OrderSum() {
                     });
                     setItemDesc(itemDescriptions);
                     setOrderTotal(total);
+                    const customerResponse = await axios.get(`http://localhost:4000/customer/0`);
+                    setCustomer(customerResponse.data[0]);
+                    const paymentResponse = await axios.get(`http://localhost:4000/customer/${customer.CustomerID}/payment`);
+                    setPayment(paymentResponse.data[0]);
                 }
             } catch (error) {
                 console.error('Error fetching order items:', error);
@@ -58,9 +60,9 @@ function OrderSum() {
         try {
             const orderData = {
                 'OrderID': OrderID,
-                "CustomerID": 0,
-                "DeliveryAddress": "3345",
-                "PaymentStatus": "Credit-Card",
+                "CustomerID": customer.CustomerID,
+                "DeliveryAddress": customer.PrimaryAddress,
+                "PaymentStatus": paymentInfo.PaymentType,
                 "OrderStatus": "Completed",
             };
             const response = await axios.put(`http://localhost:4000/orders/${OrderID}`, orderData);
@@ -76,10 +78,55 @@ function OrderSum() {
             alert('An error occurred while placing the order. Please try again later.');
         }
     };
-    //
+    const makeOrderFavorite = async () => {
+        try {
+            const favoriteData = {
+                'ID': customer.CustomerID, //replace with actual customerID
+                'OrderID': OrderID,
+            };
+            // replace 1 with actual customerID
+            const response = await axios.post(`http://localhost:4000/customer/1/orders/favorites/${OrderID}`, favoriteData);
+
+            if (response.status === 200) {
+                alert('Order marked as favorite successfully!');
+            } else {
+                alert('Failed to mark the order as a favorite. Please try again later.');
+            }
+        } catch (error) {
+            console.error('Error marking the order as a favorite:', error);
+            alert('An error occurred while marking the order as a favorite. Please try again later.');
+        }
+    };
+    const handleCouponCodeChange = (event) => {
+        setAppliedCoupon(event.target.value);
+    };
+    const applyCoupon = async () => {
+        try {
+            const response = await axios.get(`http://localhost:4000/coupons?code="${appliedCoupon}"`);
+            const discount = response.data[0].Discount;
+            const id = response.data[0].ItemID;
+            let isCoupon = false;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].ItemID == id) {
+                    isCoupon = true;
+                }
+            }
+            if (isCoupon) {
+                if (orderTotal - discount <= 0) {
+                    setOrderTotal(0);
+                } else {
+                    setOrderTotal(orderTotal - discount);
+                }
+            } else {
+                alert('Coupon cannot be applied to this order');
+            }
+        } catch (error) {
+            console.error('Error applying coupon:', error);
+            alert('An error occurred while applying coupon. Please try again later.');
+        }
+    };
     const handleDeleteItem = async (itemId) => {
         try {
-            console.log(OrderID);
             const response = await axios.delete(`http://localhost:4000/orders/${OrderID}/items/${itemId}`)
             window.location.reload();
         }
@@ -87,24 +134,45 @@ function OrderSum() {
             console.error('Error deleting order item, try again', error);
             alert('Error deleting item from order');
         }
-        console.log("item deleted");
+    };
+    const [newPaymentInfo, setNewPaymentInfo] = useState({
+        PaymentType: '',
+        CardNumber: '',
+        CardExpiration: '',
+        CardSecurity: '',
+    });
+    const [isFormVisible, setIsFormVisible] = useState(false);
+
+    const handleInputChange = (e) => {
+        setNewPaymentInfo({
+            ...newPaymentInfo,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const editPayment = async () => {
+        try {
+            const response = await axios.put(`http://localhost:4000/payment/${paymentInfo.PaymentID}`, newPaymentInfo);
+            console.log('Payment updated successfully', response);
+            setIsFormVisible(false);
+            window.location.reload();
+        } catch (error) {
+            console.error('Error editing payment, try again', error);
+            alert('Error editing payment information');
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        editPayment();
+    };
+
+    const toggleFormVisibility = () => {
+        setIsFormVisible(!isFormVisible);
     };
     return (
         <div>
-            <Navbar bg="dark" variant="dark" className="navbar bg-dark">
-                <Navbar.Brand href="/home">
-                    <Button variant="secondary" className="menu-btn">Dashers</Button>
-                </Navbar.Brand>
-                <Nav className="mr-auto">
-                    <Nav.Link href="/res">Restaurant</Nav.Link>
-                    <Nav.Link href="/map">Map</Nav.Link>
-                </Nav>
-
-                {/* shopping cart button */}
-                <Link to="/order" className="ms-auto">
-                    <Button variant="primary">Shopping Cart</Button>
-                </Link>
-            </Navbar>
+            <HeaderBar />
             <br /><br />
             {/* Checkout screen */}
             <div className="card" id="orderSum">
@@ -124,22 +192,86 @@ function OrderSum() {
                         ))}
 
                     </ul>
-                    <p>Order Total: ${orderTotal.toFixed(2)}</p>
-                    <Link to="/res">
-                        <button className="btn btn-primary">Edit Order</button>
-                    </Link>
+                    <div><p id="total">Order Total: ${orderTotal.toFixed(2)}</p>
+                        <Link to="/res">
+                            <button type="button" className="btn btn-primary" id="edit">Edit Order</button>
+                        </Link></div>
+                    <br></br>
+                    <div id="button-container">
+                        <Form.Group controlId="couponCode">
+                            <Form.Label>Coupon Code</Form.Label>
+                            <FormControl
+                                type="text"
+                                placeholder="Enter coupon code"
+                                value={appliedCoupon}
+                                onChange={handleCouponCodeChange}
+                            />
+                        </Form.Group>
+                        <button type="button" className="btn btn-primary" onClick={applyCoupon}>
+                            Apply Coupon
+                        </button>
+                        <button type="button" className="btn btn-primary" onClick={makeOrderFavorite}>
+                            Make Favorite
+                        </button>
+                    </div>
+
                 </div>
                 <hr />
                 <h1>Order Details </h1>
                 <hr />
                 <div id="orderDetails">
                     <ul id="detailList">
-                        <li>Customer Name: {customer.name}</li>
-                        <li>Delivery Address: {customer.address}</li>
-                        <li>Payment: { }</li>
-                        <li>Test:</li>
+                        <li>Customer Name: {customer.Name}</li>
+                        <li>Delivery Address: {customer.PrimaryAddress}</li>
+                        <li>Payment: {paymentInfo.PaymentType} <br></br> Card Number: {paymentInfo.CardNumber}
+                            <br></br>CVV: {paymentInfo.CardSecurity} <br></br>EXP: {paymentInfo.CardExpiration}</li>
                     </ul>
-                    <button className="btn btn-primary">Edit Details</button>
+                    <div>
+                        <button className="btn btn-primary" onClick={toggleFormVisibility}>
+                            {isFormVisible ? 'Cancel Edit' : 'Edit Payment'}
+                        </button>
+                        {isFormVisible && (
+                            <form onSubmit={handleSubmit}>
+                                <div>
+                                    <label>Payment Type:</label>
+                                    <input
+                                        type="text"
+                                        name="PaymentType"
+                                        value={newPaymentInfo.PaymentType}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                                <div>
+                                    <label>Card Number:</label>
+                                    <input
+                                        type="text"
+                                        name="CardNumber"
+                                        value={newPaymentInfo.CardNumber}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                                <div>
+                                    <label>Card Expiration:</label>
+                                    <input
+                                        type="text"
+                                        name="CardExpiration"
+                                        value={newPaymentInfo.CardExpiration}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                                <div>
+                                    <label>Card Security Code:</label>
+                                    <input
+                                        type="text"
+                                        name="CardSecurity"
+                                        value={newPaymentInfo.CardSecurity}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                                <button class="btn btn-primary" type="submit">Update Payment</button>
+                            </form>
+                        )}
+                    </div>
                 </div>
                 <hr />
 

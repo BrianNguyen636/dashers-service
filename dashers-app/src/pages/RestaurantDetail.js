@@ -4,12 +4,19 @@ import './restaurantPage.css';
 import { Navbar, Nav, Card, Button, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
+import HeaderBar from '../components/HeaderBar'
+
+
+
 
 const RestaurantDetail = () => {
     const { RestaurantID } = useParams();
     const [restaurant, setRestaurant] = useState({});
     const [menu, setMenu] = useState({});
     const [reviews, setReviews] = useState([]);
+    const [filter, setFilter] = useState("All");
+    const [customer, setCustomer] = useState([]);
+    const [paymentInfo, setPayment] = useState([]);
 
     useEffect(() => {
         const getRestaurant = async () => {
@@ -20,6 +27,10 @@ const RestaurantDetail = () => {
                 setMenu(menuResponse.data);
                 const reviewsResponse = await axios.get(`http://localhost:4000/review/restaurant/${RestaurantID}`);
                 setReviews(reviewsResponse.data);
+                const customerResponse = await axios.get(`http://localhost:4000/customer/0`);
+                setCustomer(customerResponse.data[0]);
+                const paymentResponse = await axios.get(`http://localhost:4000/customer/${customerResponse.data[0].CustomerID}/payment`);
+                setPayment(paymentResponse.data[0]);
             } catch (error) {
                 console.error('Error fetching restaurant data:', error);
             }
@@ -37,7 +48,7 @@ const RestaurantDetail = () => {
             //     OrderStatus: 'In-Progress',
             // };
             const status = "In-Progress";
-            const orderExists = await axios.get(`http://localhost:4000/customer/0/orders?OrderStatus="${status}"`, {
+            const orderExists = await axios.get(`http://localhost:4000/customer/${customer.CustomerID}/orders?OrderStatus="${status}"`, {
                 // params: param,
             });
             let orderID;
@@ -51,9 +62,9 @@ const RestaurantDetail = () => {
                 console.log("No orders found");
                 // creates new order
                 const body = {
-                    CustomerID: 0,
-                    DeliveryAddress: "saddsa",
-                    PaymentStatus: "sida",
+                    CustomerID: customer.CustomerID,
+                    DeliveryAddress: customer.PrimaryAddress,
+                    PaymentStatus: paymentInfo.PaymentType,
                     OrderStatus: "In-Progress",
                 };
                 const orderResponse = await axios.post(`http://localhost:4000/orders`, body);
@@ -73,24 +84,58 @@ const RestaurantDetail = () => {
         }
 
     };
+    const handleFilter = async (filter) => {
+        setFilter(filter)
+        if (filter == "All") {
+            const menuResponse = await axios.get(`http://localhost:4000/restaurant/${RestaurantID}/items`);
+            setMenu(menuResponse.data);
+        } else if (filter == "Vegetarian") {
+            const menuResponse = await axios.get(`http://localhost:4000/restaurant/${RestaurantID}/items/vegetarian`);
+            setMenu(menuResponse.data);
+        } else {
+            const menuResponse = await axios.get(`http://localhost:4000/restaurant/${RestaurantID}/${filter}`);
+            setMenu(menuResponse.data);
+        }
+    }
+    const [newReview, setNewReview] = useState({
+        RestaurantID: RestaurantID,
+        Name: '',
+        Rating: '',
+        Body: '',
+    });
 
+    const addReview = (event) => {
+        const { name, value } = event.target;
+        setNewReview({
+            ...newReview,
+            [name]: value,
+        });
+    };
+    const submitReview = async (event) => {
+        event.preventDefault();
+        try {
+            console.log(newReview);
+            const response = await axios.post(`http://localhost:4000/review`, newReview);
+            if (response.status === 200) {
+                alert('Review submitted successfully!');
+                setNewReview({
+                    restaurantid: RestaurantID,
+                    name: '',
+                    rating: '',
+                    body: '',
+                });
+                window.location.reload();
+            } else {
+                alert('Failed to submit the review. Please try again later.');
+            }
+        } catch (error) {
+            console.error('Error submitting the review:', error);
+            alert('An error occurred while submitting the review. Please try again later.');
+        }
+    };
     return (
         <div>
-            <Navbar bg="dark" variant="dark" className="navbar bg-dark">
-                <Navbar.Brand href="/home">
-                    <Button variant="secondary" className="menu-btn">Dashers</Button>
-                </Navbar.Brand>
-                <Nav className="mr-auto">
-                    <Nav.Link href="/res">Restaurant</Nav.Link>
-                    <Nav.Link href="/map">Map</Nav.Link>
-                </Nav>
-
-                {/* shopping cart button */}
-                <Link to="/order" className="ms-auto">
-                    <Button variant="primary">Shopping Cart</Button>
-                </Link>
-            </Navbar>
-
+            <HeaderBar />
             <div className="container mt-5">
                 <h1 className="text-center mb-4">{restaurant.Name} Menu</h1>
                 {Object.keys(restaurant).length > 0 ? (
@@ -103,6 +148,33 @@ const RestaurantDetail = () => {
                             <p>Rating: {restaurant[0].Rating}</p>
                             <p>Popular Item: {restaurant[0].Popular_Item}</p>
                         </h4>
+                        <hr />
+                        <div className="btn-group">
+                            <button className={filter === "All" ? ('btn btn-primary') : ('btn btn-secondary')}
+                                onClick={() => handleFilter("All")}>
+                                All
+                            </button>
+                            <button className={filter === "Entree" ? ('btn btn-primary') : ('btn btn-secondary')}
+                                onClick={() => handleFilter("Entree")}>
+                                Entree
+                            </button>
+                            <button className={filter === "Side" ? ('btn btn-primary') : ('btn btn-secondary')}
+                                onClick={() => handleFilter("Side")}>
+                                Sides
+                            </button>
+                            <button className={filter === "Drink" ? ('btn btn-primary') : ('btn btn-secondary')}
+                                onClick={() => handleFilter("Drink")}>
+                                Drink
+                            </button>
+                            <button className={filter === "Dessert" ? ('btn btn-primary') : ('btn btn-secondary')}
+                                onClick={() => handleFilter("Dessert")}>
+                                Dessert
+                            </button>
+                            <button className={filter === "Vegetarian" ? ('btn btn-primary') : ('btn btn-secondary')}
+                                onClick={() => handleFilter("Vegetarian")}>
+                                Vegetarian
+                            </button>
+                        </div>
                         <div className="menu-items mt-4">
                             {menu && menu.length > 0 ? (
                                 <Row xs={1} md={3} className="g-4">
@@ -154,6 +226,35 @@ const RestaurantDetail = () => {
                 ) : (
                     <p>Loading...</p>
                 )}
+                <div className="review-form mt-4">
+                    <h2>Leave a Review</h2>
+                    <form onSubmit={submitReview}>
+                        <div className="mb-3">
+                            <label htmlFor="reviewName" className="form-label">Name</label>
+                            <input
+                                type="text" className="form-control" id="reviewName" name="Name"
+                                value={newReview.Name} onChange={addReview} required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="reviewRating" className="form-label">Rating</label>
+                            <input
+                                type="number" className="form-control" id="reviewRating" name="Rating" value={newReview.Rating}
+                                onChange={addReview} min="1" max="5" required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="reviewBody" className="form-label">Review</label>
+                            <textarea
+                                className="form-control" id="reviewBody" name="Body" value={newReview.Body}
+                                onChange={addReview} rows="4" required
+                            ></textarea>
+                        </div>
+                        <button type="submit" className="btn btn-primary">
+                            Submit Review
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     );

@@ -448,6 +448,8 @@ app.get('/orders/:ID', (request, response) => {
  *                  Success:
  *                      type: String
  *                      description: Record was added
+ *          '400':
+ *              description: Error, Possibly incorrect query or missing quotes
  * 
  */
 app.get('/customer/:ID/orders', (request, response) => {
@@ -732,11 +734,50 @@ app.delete('/orders/:ID/items/:ItemID', (request, response) => {
 // ------------------------------------------------------------------
 // FAVORITED ORDERS
 
-// GET all Favorited Orders given CustomerID
+/**
+ * @swagger
+ * /customer/{ID}/orders/favorites:
+ *  get:
+ *      tags:
+ *          - Orders
+ *      description: Gets all favorited orders by customerID
+ *      parameters:
+ *          - in: path
+ *            name: ID
+ *            required: true
+ *            description: The ID of the Customer.
+ *      responses:
+ *          '200':
+ *               description: Success
+ * 
+ */
 app.get('/customer/:ID/orders/favorites', (request, response) => {
     return getID(request.params.ID, "SELECT * FROM favorders WHERE CustomerID = ?; ", response);
 });
 //INSERT FavOrder by CustomerID and OrderID
+/**
+ * @swagger
+ * /customer/{CustomerID}/orders/favorites/{OrderID}:
+ *  post:
+ *      description: Make a new favorite order
+ *      tags:
+ *          - Orders
+ *      parameters:
+ *          - in: path
+ *            name: CustomerID
+ *            required: true
+ *            description: The ID of the Customer.
+ *          - in: path
+ *            name: OrderID
+ *            required: true
+ *            description: The ID of the Order.
+ *      responses:
+ *          '200':
+ *               description: Item successfully added.
+ *          '400':
+ *               description: Failed to add record, possibly incorrect fields.
+ * 
+ */
 app.post('/customer/:ID/orders/favorites/:OrderID', (request, response) => {
     const values = [request.params.ID,request.params.OrderID]
     const sqlQuery = 'INSERT INTO favorders VALUES (?);';
@@ -747,22 +788,112 @@ app.post('/customer/:ID/orders/favorites/:OrderID', (request, response) => {
         return response.status(200).json({Success:"Record was added!"});
     });
 });
-//DELETE RECORD BY CustomerID and OrderID
+/**
+ * @swagger
+ * /customer/{CustomerID}/orders/favorites/{OrderID}:
+ *  delete:
+ *      tags:
+ *          - Orders
+ *      description: Removes a given order from a Customer's favorites
+ *      parameters:
+ *          - in: path
+ *            name: CustomerID
+ *            required: true
+ *            description: The ID of the Customer.
+ *          - in: path
+ *            name: OrderID
+ *            required: true
+ *            description: The ID of the Order.
+ *      responses:
+ *          '200':
+ *               description: Success
+ * 
+ */
 app.delete('/customer/:ID/orders/favorites/:OrderID', (request, response) => {
     return deleteID([request.params.ID,request.params.OrderID], "DELETE FROM favorders WHERE CustomerID = ? AND OrderID = ? ; ", response);
 });
 // -----------------------------------------------------
 // PaymentInfo
 
-// GET all payment given a customer ID.
+/**
+ * @swagger
+ * /customer/{ID}/payment:
+ *  get:
+ *      tags:
+ *          - Customers
+ *      description: Returns the paymentinfo saved by a given Customer by ID
+ *      parameters:
+ *          - in: path
+ *            name: ID
+ *            required: true
+ *            description: The ID of the Customer.
+ *      responses:
+ *          '200':
+ *               description: Success
+ * 
+ */
 app.get('/customer/:ID/payment', (request, response) => {
     return getID(request.params.ID, "SELECT * FROM paymentinfo WHERE CustomerID = ? ; ", response);
 });
-// GET a payment given a paymentID.
+/**
+ * @swagger
+ * /payment/{ID}:
+ *  get:
+ *      tags:
+ *          - Payment
+ *      description: Returns the paymentinfo by ID
+ *      parameters:
+ *          - in: path
+ *            name: ID
+ *            required: true
+ *            description: The ID of the payment info.
+ *      responses:
+ *          '200':
+ *               description: Success
+ * 
+ */
 app.get('/payment/:ID', (request, response) => {
     return getID(request.params.ID, "SELECT * FROM paymentinfo WHERE PaymentID = ? ; ", response);
 });
-//INSERT Payment
+/**
+ * @swagger
+ * /payment:
+ *  post:
+ *      description: Create a new Payment record
+ *      tags:
+ *          - Payment
+ *      parameters:
+ *          - in: body
+ *            name: options
+ *            schema:
+ *                  type: object
+ *                  properties:
+ *                      CustomerID:
+ *                          type: integer
+ *                      PaymentType:
+ *                          type: string
+ *                      CardNumber:
+ *                          type: string
+ *                      CardExpiration:
+ *                          type: string
+ *                      CardSecurity:
+ *                          type: string
+ *      responses:
+ *          '200':
+ *               description: Json containing ID of newly created record
+ *               type: object
+ *               schema:
+ *                  properties:
+ *                      ID: 
+ *                          type: integer
+ *               headers:
+ *                  Success:
+ *                      type: String
+ *                      description: Record was added
+ *          '400':
+ *               description: Failed to add record, possibly incorrect fields.
+ * 
+ */
 app.post('/payment', (request, response) => {
     const values = [request.body.PaymentID, request.body.CustomerID, request.body.PaymentType, request.body.CardNumber,
         request.body.CardExpiration, request.body.CardSecurity];
@@ -771,11 +902,42 @@ app.post('/payment', (request, response) => {
         if (err) {
             return response.status(400).json({Error: "Failed: Record was not added."})
         }
-        response.setHeader("ID", result.insertId)
-        return response.status(200).json({Success:"Record was added!"});
+        response.setHeader("Success", "Record was added!")
+        return response.status(200).json({"ID":result.insertId});
     });
 });
-//UPDATE RECORD BY PaymentID
+/**
+ * @swagger
+ * /payment/{ID}:
+ *  put:
+ *      description: Update a given Payment record
+ *      tags:
+ *          - Payment
+ *      parameters:
+ *          - in: path
+ *            name: ID
+ *            required: true
+ *            description: The ID of the Payment record.
+ *          - in: body
+ *            name: options
+ *            schema:
+ *                  type: object
+ *                  properties:
+ *                      PaymentType:
+ *                          type: string
+ *                      CardNumber:
+ *                          type: string
+ *                      CardExpiration:
+ *                          type: string
+ *                      CardSecurity:
+ *                          type: string
+ *      responses:
+ *          '200':
+ *               description: Item successfully updated.
+ *          '400':
+ *               description: Failed to add record, possibly incorrect fields or payment record does not exist.
+ * 
+ */
 app.put('/payment/:ID', (request, response) => {
     const ID = request.params.ID;
     const sqlQuery = 'UPDATE PaymentInfo SET PaymentType = ?, CardNumber = ?, CardExpiration = ?, CardSecurity = ? WHERE PaymentID = ? ;';
@@ -788,7 +950,23 @@ app.put('/payment/:ID', (request, response) => {
         return response.status(200).json({Success: "Successful: Record was updated!"});
     });
 });
-//DELETE RECORD BY paymentID
+/**
+ * @swagger
+ * /payment/{ID}:
+ *  delete:
+ *      tags:
+ *          - Payment
+ *      description: Deletes a payment record
+ *      parameters:
+ *          - in: path
+ *            name: ID
+ *            required: true
+ *            description: The ID of the payment record.
+ *      responses:
+ *          '200':
+ *               description: Success
+ * 
+ */
 app.delete('/payment/:ID', (request, response) => {
     return deleteID(request.params.ID, "DELETE FROM paymentinfo WHERE PaymentID = ? ; ", response);
 });
@@ -797,6 +975,25 @@ app.delete('/payment/:ID', (request, response) => {
 
 // GET all available coupons
 // Query for certain coupon given code.
+/**
+ * @swagger
+ * /coupons:
+ *  get:
+ *      tags:
+ *          - Coupons
+ *      description: Returns all coupons
+ *      parameters:
+ *          - in: query
+ *            name: code
+ *            required: false
+ *            description: Queries the coupon of a given code.
+ *      responses:
+ *          '200':
+ *               description: Success
+ *          '400':
+ *               description: Error, Possibly incorrect query or missing quotes.
+ * 
+ */
 app.get('/coupons', (request, response) => {
     const code = request.query.code;
     sqlQuery = "SELECT * FROM coupons ";
@@ -811,11 +1008,43 @@ app.get('/coupons', (request, response) => {
     });
 });
 
-// GET coupons from a given restaurant
+/**
+ * @swagger
+ * /coupons/restaurant/{ID}:
+ *  get:
+ *      tags:
+ *          - Coupons
+ *      description: Returns all coupons from a given restaurant
+ *      parameters:
+ *          - in: path
+ *            name: ID
+ *            required: true
+ *            description: The given restuarant ID
+ *      responses:
+ *          '200':
+ *               description: Success
+ * 
+ */
 app.get('/coupons/restaurant/:ID', (request, response) => {
     return getID(request.params.ID, "SELECT * FROM coupons WHERE RestaurantID = ? ;", response);
 });
-// GET count of coupons
+/**
+ * @swagger
+ * /coupons/count:
+ *  get:
+ *      tags:
+ *          - Coupons
+ *      description: Returns the total number of coupons for use in coupons/random
+ *      responses:
+ *          '200':
+ *               description: Success, JSON record containing Count of coupons
+ *               type: object
+ *               schema:
+ *                  properties:
+ *                      Count: 
+ *                          type: integer
+ * 
+ */
 app.get('/coupons/count', (request, response) => {
     const sqlQuery = "SELECT count(couponID) as Count FROM coupons;";
     dbConnection.query(sqlQuery, (err, result) => {
@@ -826,6 +1055,18 @@ app.get('/coupons/count', (request, response) => {
     });
 });
 // GET random coupon
+/**
+ * @swagger
+ * /coupons/random:
+ *  get:
+ *      tags:
+ *          - Coupons
+ *      description: Returns a random coupon from the total coupons
+ *      responses:
+ *          '200':
+ *               description: Success
+ * 
+ */
 app.get('/coupons/random', async (request, response) => {
     const count = await axios.get(`http://localhost:4000/coupons/count`);
     const ID = Math.floor(Math.random() * count.data[0].Count );
@@ -837,8 +1078,32 @@ app.get('/coupons/random', async (request, response) => {
         return response.status(200).json(result);
     });
 });
-//GET random coupon code using the Mailjet service to the given Email and Name in the json body.
-app.get('/coupons/mail', async (request, response) => {
+//POST mail random coupon code using the Mailjet service to the given Email and Name in the json body.
+/**
+ * @swagger
+ * /coupons/mail:
+ *  post:
+ *      description: Mails a random coupon to the given email and name
+ *      tags:
+ *          - Coupons
+ *      parameters:
+ *          - in: body
+ *            name: options
+ *            schema:
+ *                  type: object
+ *                  properties:
+ *                      Email:
+ *                          type: string
+ *                      Name:
+ *                          type: string
+ *      responses:
+ *          '200':
+ *               description: Coupon mailed to email.
+ *          '400':
+ *               description: Possibly incorrect fields.
+ * 
+ */
+app.post('/coupons/mail', async (request, response) => {
     const name = request.body.Name;
     const email = request.body.Email;
     if (name == null || email == null) {
@@ -885,7 +1150,18 @@ app.get('/coupons/mail', async (request, response) => {
 // ----------------------------------------------------------------
 // REVIEWS
 
-// GET Reviews 
+/**
+ * @swagger
+ * /review:
+ *  get:
+ *      tags:
+ *          - Reviews
+ *      description: Returns all reviews
+ *      responses:
+ *          '200':
+ *               description: Success
+ * 
+ */
 app.get('/review', (request, response) => {
     const sqlQuery = "SELECT * FROM reviews;";
     dbConnection.query(sqlQuery, (err, result) => {
@@ -895,17 +1171,84 @@ app.get('/review', (request, response) => {
         return response.status(200).json(result);
     });
 });
-// GET Review by ID
+/**
+ * @swagger
+ * /review/{ID}:
+ *  get:
+ *      tags:
+ *          - Reviews
+ *      description: Returns a given Review from its ID
+ *      parameters:
+ *          - in: path
+ *            name: ID
+ *            required: true
+ *            description: The given review ID
+ *      responses:
+ *          '200':
+ *               description: Success
+ * 
+ */
 app.get('/review/:ID', (request, response) => {
     return getID(request.params.ID, "SELECT * FROM reviews WHERE ReviewID = ? ;", response);
 });
-// GET Reviews from a given restaurant
+/**
+ * @swagger
+ * /review/restaurant/{ID}:
+ *  get:
+ *      tags:
+ *          - Reviews
+ *      description: Returns all reviews from a given restaurant
+ *      parameters:
+ *          - in: path
+ *            name: ID
+ *            required: true
+ *            description: The given restuarant ID
+ *      responses:
+ *          '200':
+ *               description: Success
+ * 
+ */
 app.get('/review/restaurant/:ID', (request, response) => {
     return getID(request.params.ID, "SELECT * FROM reviews WHERE RestaurantID = ? ;", response);
 });
-
-// POST Review
-app.post('/review/restaurant/', (request, response) => {
+/**
+ * @swagger
+ * /review:
+ *  post:
+ *      description: Create a new Review
+ *      tags:
+ *          - Reviews
+ *      parameters:
+ *          - in: body
+ *            name: options
+ *            schema:
+ *                  type: object
+ *                  properties:
+ *                      RestaurantID:
+ *                          type: integer
+ *                      Name:
+ *                          type: string
+ *                      Rating:
+ *                          type: integer
+ *                      Body:
+ *                          type: string
+ *      responses:
+ *          '200':
+ *               description: Json containing ID of newly created record
+ *               type: object
+ *               schema:
+ *                  properties:
+ *                      ID: 
+ *                          type: integer
+ *               headers:
+ *                  Success:
+ *                      type: String
+ *                      description: Record was added
+ *          '400':
+ *               description: Failed to add record, possibly incorrect fields or missing RestaurantID.
+ * 
+ */
+app.post('/review', (request, response) => {
     const sqlQuery = 'INSERT INTO reviews VALUES (?);';
     const values = [request.body.ReviewID, request.body.RestaurantID, request.body.Name, 
         request.body.Rating, request.body.Body];
@@ -917,7 +1260,64 @@ app.post('/review/restaurant/', (request, response) => {
         return response.status(200).json({"ID":result.insertId});
     });
 });
-// DELETE Review by ID
+/**
+ * @swagger
+ * /review/{ID}:
+ *  put:
+ *      description: Update a given Review
+ *      tags:
+ *          - Reviews
+ *      parameters:
+ *          - in: path
+ *            name: ID
+ *            required: true
+ *            description: The ID of the Review.
+ *          - in: body
+ *            name: options
+ *            schema:
+ *                  type: object
+ *                  properties:
+ *                      Name:
+ *                          type: string
+ *                      Rating:
+ *                          type: integer
+ *                      Body:
+ *                          type: string
+ *      responses:
+ *          '200':
+ *               description: Item successfully updated.
+ *          '400':
+ *               description: Failed to add record, possibly incorrect fields or review doesn't exist.
+ * 
+ */
+app.put('/review/:ID', (request, response) => {
+    const ID = request.params.ID;
+    const sqlQuery = 'UPDATE reviews SET Name = ?, Rating = ?, Body = ? WHERE ReviewID = ? ;';
+    const values = [request.body.Name, request.body.Rating, request.body.Body];
+    dbConnection.query(sqlQuery, [...values, ID], (err, result) => {
+        if (err) {
+            return response.status(400).json({Error: "Failed: Record was not updated."})
+        }
+        return response.status(200).json({Success: "Successful: Record was updated!"});
+    });
+});
+/**
+ * @swagger
+ * /review/{ID}:
+ *  delete:
+ *      tags:
+ *          - Reviews
+ *      description: Deletes a review
+ *      parameters:
+ *          - in: path
+ *            name: ID
+ *            required: true
+ *            description: The ID of the Review.
+ *      responses:
+ *          '200':
+ *               description: Success
+ * 
+ */
 app.delete('/review/:ID', (request, response) => {
     return deleteID(request.params.ID, "DELETE FROM reviews WHERE ReviewID = ? ;", response);
 });
