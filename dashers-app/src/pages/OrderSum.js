@@ -126,10 +126,11 @@ function OrderSum() {
                 }
             }
             if (isCoupon) {
-                if (orderTotal - discount <= 0) {
+                let discountAmo = (discount/100) * orderTotal;
+                if (orderTotal - discountAmo <= 0) {
                     setOrderTotal(0);
                 } else {
-                    setOrderTotal(orderTotal - discount);
+                    setOrderTotal(orderTotal - discountAmo);
                 }
             } else {
                 alert('Coupon cannot be applied to this order');
