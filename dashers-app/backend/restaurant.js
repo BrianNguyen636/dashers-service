@@ -250,7 +250,7 @@ app.get('/customer/:ID', (request, response) => {
 });
 /**
  * @swagger
- * /customer/{Username}/{Password}:
+ * /customer/login/{Username}/{Password}:
  *  get:
  *      tags:
  *          - Customers
