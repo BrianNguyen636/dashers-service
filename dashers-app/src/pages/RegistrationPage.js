@@ -185,28 +185,3 @@ const RegistrationPage = () => {
 };
 
 export default RegistrationPage;
-
-     // // Fetch the latest customer ID from the server
-      // const idResponse = await fetch('http://localhost:4000/Customer/:Id');
-      // const latestCustomerID = await idResponse.json();
-
-
-      // // Set the new customer ID in the state
-      // setSignupCustomerID(newCustomerID);
-
-      // // Now, proceed with the signup logic using newCustomerID
-      // const response = await fetch('http://localhost:4000/customer', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     CustomerID: signupCustomerID,
-      //     Name: signupName,
-      //     PrimaryAddress: signupPrimaryAddress,
-      //     SecondaryAddress: signupSecondaryAddress || '', // Use an empty string if secondary address is not provided
-      //     Email: signupEmail,
-      //     Username: signupUsername,
-      //     Password: signupPassword,
-      //   }),
-      // });
