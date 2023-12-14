@@ -1,10 +1,3 @@
-## Authors
-- [Amrits Singh](https://github.com/Amritapsingh)
-- [Brian Nguyen](https://github.com/BrianNguyen636)
-- [Michael Doan](https://github.com/Masayoki)
-
-Warning: Not all functionalities are implemented, as a group member became unable to contribute to the project.
-
 RUNNING THE PROJECT:
 
 Before running, one must install the neccessary react dependencies to the /dashers-app directory.
