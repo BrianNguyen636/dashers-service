@@ -76,9 +76,13 @@ function OrderSum() {
                 "OrderStatus": "Completed",
             };
             const response = await axios.put(`http://localhost:4000/orders/${OrderID}`, orderData);
-
+            const couponBody = {
+                'Name': customer.Name,
+                'Email': customer.Email, 
+            };
+            const coupon = axios.post(`http://localhost:4000/coupons/mail`, couponBody);
             if (response.status === 200) {
-                alert('Order placed successfully!');
+                alert('Order placed successfully! Check your email for a coupon!');
                 window.location.reload();
             } else {
                 alert('Failed to place the order. Please try again later.');
